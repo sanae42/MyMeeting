@@ -58,6 +58,9 @@ import com.example.mymeeting.MeetingFragment;
 //
 //}
 
+/**
+ * 主活动pageView组件的适配器
+ */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     //    @StringRes

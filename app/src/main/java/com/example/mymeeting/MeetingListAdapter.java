@@ -18,14 +18,14 @@ import java.util.List;
 
 public class MeetingListAdapter extends RecyclerView.Adapter<MeetingListAdapter.ViewHolder> {
 
-    private static final String TAG = "FruitAdapter";
+    private static final String TAG = "MeetingAdapter";
 
     private Context mContext;
 
-    private List<Meeting> mMeetingList;
+    private List<meetingItem> mMeetingItemList;
 
-    public MeetingListAdapter(List<Meeting> meetingList) {
-        mMeetingList = meetingList;
+    public MeetingListAdapter(List<meetingItem> meetingItemList) {
+        mMeetingItemList = meetingItemList;
     }
 
     @NonNull
@@ -52,16 +52,16 @@ public class MeetingListAdapter extends RecyclerView.Adapter<MeetingListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Meeting meeting = mMeetingList.get(position);
-        holder.fruitName.setText(meeting.getName());
-        Glide.with(mContext).load(meeting.getImageId()).into(holder.fruitImage);
+        meetingItem meetingItem = mMeetingItemList.get(position);
+        holder.meetingName.setText(meetingItem.getName());
+        Glide.with(mContext).load(meetingItem.getImageId()).into(holder.meetingImage);
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Meeting meeting = mMeetingList.get(position);
+                meetingItem meetingItem = mMeetingItemList.get(position);
                 Intent intent = new Intent(mContext, MeetingActivity.class);
-                intent.putExtra(MeetingActivity.FRUIT_NAME, meeting.getName());
-                intent.putExtra(MeetingActivity.FRUIT_IMAGE_ID, meeting.getImageId());
+                intent.putExtra(MeetingActivity.MEETING_NAME, meetingItem.getName());
+                intent.putExtra(MeetingActivity.MEETING_IMAGE_ID, meetingItem.getImageId());
                 mContext.startActivity(intent);
             }
         });
@@ -69,19 +69,19 @@ public class MeetingListAdapter extends RecyclerView.Adapter<MeetingListAdapter.
 
     @Override
     public int getItemCount() {
-        return mMeetingList.size();
+        return mMeetingItemList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
-        ImageView fruitImage;
-        TextView fruitName;
+        ImageView meetingImage;
+        TextView meetingName;
 
         public ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
-            fruitImage = (ImageView) view.findViewById(R.id.fruit_image);
-            fruitName = (TextView) view.findViewById(R.id.fruit_name);
+            meetingImage = (ImageView) view.findViewById(R.id.meeting_image);
+            meetingName = (TextView) view.findViewById(R.id.meeting_name);
         }
     }
 }

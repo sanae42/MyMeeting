@@ -15,9 +15,9 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 public class MeetingActivity extends AppCompatActivity {
 
-    public static final String FRUIT_NAME = "fruit_name";
+    public static final String MEETING_NAME = "fruit_name";
 
-    public static final String FRUIT_IMAGE_ID = "fruit_image_id";
+    public static final String MEETING_IMAGE_ID = "fruit_image_id";
 
 //    TODO：状态栏透明化暂未实现
 
@@ -28,8 +28,8 @@ public class MeetingActivity extends AppCompatActivity {
 
         //从跳转的活动得到传值
         Intent intent = getIntent();
-        String fruitName = intent.getStringExtra(FRUIT_NAME);
-        int fruitImageId = intent.getIntExtra(FRUIT_IMAGE_ID, 0);
+        String fruitName = intent.getStringExtra(MEETING_NAME);
+        int fruitImageId = intent.getIntExtra(MEETING_IMAGE_ID, 0);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);

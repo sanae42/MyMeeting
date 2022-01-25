@@ -14,11 +14,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+
+import java.sql.Time;
+import java.time.ZonedDateTime;
+import java.util.Date;
+
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+
+import static org.litepal.LitePalApplication.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
 
 //    TODO：登录相关功能ViewModel暂未启用
-    //    ViewModel
-    private SharedViewModel model;
-    //    登录状态
-    private boolean log;
+//    //    ViewModel
+//    private SharedViewModel model;
+//    //    登录状态
+//    private boolean log;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +81,10 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
-//    初始化控件
+
+    /**
+     * 初始化控件
+     */
     private void initiateView(){
         //        导航条
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -104,23 +118,42 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "点击了悬浮按钮", Toast.LENGTH_SHORT).show();
                 Snackbar.make(v, "Data deleted", Snackbar.LENGTH_SHORT)
                         .setAction("Undo", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Toast.makeText(MainActivity.this, "Data restored", Toast.LENGTH_SHORT).show();
+
+                                Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
+                                Meeting m = new Meeting();
+                                m.setName("会议x");
+                                m.setComtent("123412345");
+//                                Date date = new Date(System.currentTimeMillis());
+//                                Time time = new Time(LocalTime);
+//                                m.setHostDate(System.currentTimeMillis().);?
+//                                m.setRegistrationDate(date);
+                                m.setIntroduction("jianjie");
+                                m.setLength("两小时");
+                                m.setLocation("sy108");
+                                m.setOrganizer("18301038");
+                                m.save(new SaveListener<String>() {
+                                    @Override
+                                    public void done(String objectId, BmobException e) {
+                                        if(e==null){
+                                            Toast.makeText(MainActivity.this, "添加数据成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Toast.makeText(MainActivity.this, "创建数据失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+//                                Toast.makeText(MainActivity.this, "Data restored", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();
-                //    TODO：登录相关功能ViewModel暂未启用
-//                if(model.getLog().getValue()==true)model.logout();
-//                else model.login();
             }
         });
 
         //SectionsPagerAdapter设置
-//        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),fragments);
         sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         //ViewPager设置（中间空白部分）
         viewPager = findViewById(R.id.view_pager);
@@ -132,8 +165,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-    //菜单按键监听，此处菜单即toolbar上一系列按键
+    /**
+     * 菜单按键监听，此处菜单即toolbar上一系列按键
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -156,7 +190,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //  菜单创建 及搜索框相关
+    /**
+     * 菜单创建 及搜索框相关
+     */
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
 
@@ -188,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
 
         return true;
     }

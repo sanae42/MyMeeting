@@ -4,27 +4,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="4dp"
     app:cardCornerRadius="4dp">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/fruit_image"
-            android:layout_width="match_parent"
+            android:id="@+id/meeting_image"
+            android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop" />
 
-        <TextView
-            android:id="@+id/fruit_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp"
-            android:textSize="16sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/meeting_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="left"
+                android:textColor="@color/black"
+                android:layout_margin="5dp"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/meeting_date"
+                android:text="2022年1月25日"
+                android:drawableLeft="@drawable/ic_baseline_today_24"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="left"
+                android:layout_margin="5dp"
+                android:textSize="12sp" />
+            <TextView
+                android:id="@+id/meeting_location"
+                android:text="sy101"
+                android:drawableLeft="@drawable/ic_baseline_location_on_24"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="left"
+                android:layout_margin="5dp"
+                android:textSize="12sp" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

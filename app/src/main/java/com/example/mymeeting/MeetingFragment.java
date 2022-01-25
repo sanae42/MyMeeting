@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -13,9 +12,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.mymeeting.bomb.Meeting;
+import com.example.mymeeting.bomb.text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 
 public class MeetingFragment extends Fragment {
 
@@ -23,14 +30,14 @@ public class MeetingFragment extends Fragment {
 
     public View view;
 
-    private Meeting[] meetings = {new Meeting("Apple", R.drawable.apple), new Meeting("Banana", R.drawable.banana),
-            new Meeting("Orange", R.drawable.orange), new Meeting("Watermelon", R.drawable.watermelon),
-            new Meeting("Pear", R.drawable.pear), new Meeting("Grape", R.drawable.grape),
-            new Meeting("Pineapple", R.drawable.pineapple), new Meeting("Strawberry", R.drawable.strawberry),
-            new Meeting("Cherry", R.drawable.cherry), new Meeting("Mango", R.drawable.mango)};
+    private meetingItem[] meetingItems = {new meetingItem("Apple", R.drawable.apple), new meetingItem("Banana", R.drawable.banana),
+            new meetingItem("Orange", R.drawable.orange), new meetingItem("Watermelon", R.drawable.watermelon),
+            new meetingItem("Pear", R.drawable.pear), new meetingItem("Grape", R.drawable.grape),
+            new meetingItem("Pineapple", R.drawable.pineapple), new meetingItem("Strawberry", R.drawable.strawberry),
+            new meetingItem("Cherry", R.drawable.cherry), new meetingItem("Mango", R.drawable.mango)};
 
     //recyclerview内容
-    private List<Meeting> meetingList = new ArrayList<>();
+    private List<meetingItem> meetingItemList = new ArrayList<>();
 
     //recyclerview适配器
     private MeetingListAdapter adapter;
@@ -38,11 +45,11 @@ public class MeetingFragment extends Fragment {
     //    下拉刷新
     private SwipeRefreshLayout swipeRefresh;
 
+//    TODO：登录相关功能ViewModel暂未启用
 //    //    ViewModel
 //    private SharedViewModel model;
-
-    //    登录状态
-    private boolean log;
+//    //    登录状态
+//    private boolean log;
 
     public MeetingFragment() {
         // Required empty public constructor
@@ -59,10 +66,7 @@ public class MeetingFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         Log.d(this.toString(), "创建了一个碎片");
-//        Toast.makeText(getContext(), "创建了一个碎片", Toast.LENGTH_LONG).show();
-
         super.onCreate(savedInstanceState);
     }
 
@@ -71,6 +75,7 @@ public class MeetingFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_meeting, container, false);
 
+        //    TODO：登录相关功能ViewModel暂未启用
 //        model = ViewModelProviders.of(this).get(SharedViewModel.class);
 //        model.getLog().observe(getActivity(), new Observer<Boolean>() {
 //            @Override
@@ -79,15 +84,34 @@ public class MeetingFragment extends Fragment {
 //            }
 //        });
 
+        //    TODO：测试从服务器获取数据
         //初始化水果列表
         initFruits();
+        Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
+        BmobQuery<Meeting> query = new BmobQuery<>();
+
+        query.findObjects(new FindListener<Meeting>() {
+            @Override
+            public void done(List<Meeting> list, BmobException e) {
+                if(list.size()==0){
+                    Log.d("测试获取服务器数据", "没有数据");
+                }else {
+                    Log.d("测试获取服务器数据", "list大小: "+list.size());
+                    for(Meeting meeting: list){
+                        Log.d("测试获取服务器数据", meeting.getRegistrationDate().getDate());
+//                        Log.d("测试获取服务器数据", meeting.getId()+"");
+                    }
+                }
+            }
+
+        });
 
 //        recyclerview设置
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-//        适配器设置，设置显示两列
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+//        适配器设置，设置显示1列
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new MeetingListAdapter(meetingList);
+        adapter = new MeetingListAdapter(meetingItemList);
         recyclerView.setAdapter(adapter);
 
 //        下拉刷新
@@ -130,11 +154,11 @@ public class MeetingFragment extends Fragment {
 
     //随机水果列表
     private void initFruits() {
-        meetingList.clear();
+        meetingItemList.clear();
         for (int i = 0; i < 50; i++) {
             Random random = new Random();
-            int index = random.nextInt(meetings.length);
-            meetingList.add(meetings[index]);
+            int index = random.nextInt(meetingItems.length);
+            meetingItemList.add(meetingItems[index]);
         }
     }
 
@@ -143,15 +167,58 @@ public class MeetingFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+//                    Thread.sleep(2000);
+                Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
+                BmobQuery<Meeting> query = new BmobQuery<Meeting>();
+                //返回50条数据，如果不加上这条语句，默认返回10条数据
+                query.setLimit(100);
+                //执行查询方法
+                query.findObjects(new FindListener<Meeting>() {
+                    @Override
+                    public void done(List<Meeting> list, BmobException e) {
+                        if(list.size()==0){
+                            Log.d("测试获取服务器数据", "没有数据");
+//                            Toast.makeText(getContext(), "云端数据库没有会议数据", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Log.d("测试获取服务器数据", "list大小: "+list.size());
+                            meetingItemList.clear(); //清空会议列表
+                            for(Meeting meeting : list){
+                                meetingItem m= new meetingItem();
+                                m.setImageId(R.drawable.pear);
+//                                m.setName(meeting.getName());
+                                meetingItemList.add(m);
+                            }
+                        }
+                    }
+                });
+//                query.findObjects(new FindListener<Meeting>() {
+//                    @Override
+//                    public void done(List<Meeting> list, BmobException e) {
+//                        if(list.size()==0){
+//                            Log.d("测试获取服务器数据", "没有数据");
+//                            Toast.makeText(getContext(), "云端数据库没有会议数据", Toast.LENGTH_SHORT).show();
+//                        }else{
+//                            Log.d("测试获取服务器数据", "list大小: "+list.size());
+//                            meetingItemList.clear(); //清空会议列表
+//                            for(Meeting meeting : list){
+//                                meetingItem m= new meetingItem();
+//                                m.setImageId(R.drawable.pear);
+//                                m.setName(meeting.getName());
+//                                meetingItemList.add(m);
+//                            }
+//
+//                        }
+//                    }
+//                });
+//                try {
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        initFruits();
                         adapter.notifyDataSetChanged();
                         swipeRefresh.setRefreshing(false);
                     }
@@ -167,39 +234,35 @@ public class MeetingFragment extends Fragment {
     public void refresh(String s)
     {
 //        Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-        List<Meeting> newList = new ArrayList<>();
-        for(Meeting f: meetingList){
+        List<meetingItem> newList = new ArrayList<>();
+        for(meetingItem f: meetingItemList){
             if(f.getName().equals("Pear")==true){
                 newList.add(f);
 //                Log.d(this.toString(), "有一个梨子");
             }
         }
-        meetingList.clear();
-        for(Meeting f: newList){
-            meetingList.add(f);
+        meetingItemList.clear();
+        for(meetingItem f: newList){
+            meetingItemList.add(f);
         }
-//        Toast.makeText(getContext(), "梨子"+newList.size(), Toast.LENGTH_SHORT).show();
-//        Log.d(this.toString(), "梨子"+newList.size());
-//        adapter.notifyDataSetChanged();
-//        initFruits();
+
         adapter.notifyDataSetChanged();
-        Log.d(this.toString(), "梨子"+newList.size()+" "+ meetingList.size());
-        Toast.makeText(getContext(), "梨子"+newList.size()+" "+ meetingList.size(), Toast.LENGTH_SHORT).show();
-//        view.findViewById(R.id.swipe_refresh).setVisibility(View.INVISIBLE);
+
     }
 
-    public void changeLogMode(Boolean bool){
-        log = bool;
-        RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.relativeLayout);
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
-        if (bool == false){
-            relativeLayout.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-        }
-        else {
-            relativeLayout.setVisibility(View.GONE);
-            swipeRefreshLayout.setVisibility(View.VISIBLE);
-        }
-    }
+    //    TODO：登录相关功能ViewModel暂未启用
+//    public void changeLogMode(Boolean bool){
+//        log = bool;
+//        RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.relativeLayout);
+//        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
+//        if (bool == false){
+//            relativeLayout.setVisibility(View.VISIBLE);
+//            swipeRefreshLayout.setVisibility(View.GONE);
+//        }
+//        else {
+//            relativeLayout.setVisibility(View.GONE);
+//            swipeRefreshLayout.setVisibility(View.VISIBLE);
+//        }
+//    }
 
 }
