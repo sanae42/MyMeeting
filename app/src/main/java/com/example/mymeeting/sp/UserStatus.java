@@ -9,7 +9,7 @@ public class UserStatus {
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
-    public void UserStatus(Context context){
+    public UserStatus(Context context) {
         pref = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -21,10 +21,12 @@ public class UserStatus {
         editor.putBoolean("rememberPassword",rememberPassword);
 
         editor.putBoolean("login",true);
+        editor.apply();
     }
 
     public void logout(){
         editor.putBoolean("login",false);
+        editor.apply();
     }
 
     public int getId(){

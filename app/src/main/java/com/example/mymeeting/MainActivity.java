@@ -8,14 +8,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.mymeeting.bomb.Meeting;
+import com.example.mymeeting.bomb.doBomb;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
+import com.example.mymeeting.sp.UserStatus;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -26,8 +31,10 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static org.litepal.LitePalApplication.getContext;
 
@@ -39,46 +46,24 @@ public class MainActivity extends AppCompatActivity {
     //    搜索栏
     SearchView searchView;
 
-//    ViewPager及其适配器
+    //    ViewPager及其适配器
     SectionsPagerAdapter sectionsPagerAdapter;
     ViewPager viewPager;
-
-//    TODO：登录相关功能ViewModel暂未启用
-//    //    ViewModel
-//    private SharedViewModel model;
-//    //    登录状态
-//    private boolean log;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //    TODO：登录相关功能ViewModel暂未启用
-//        model = ViewModelProviders.of(this).get(SharedViewModel.class);
-//        model.getLog().observe(this, new Observer<Boolean>() {
-//            @Override
-//            public void onChanged(Boolean b) {
-//                log = model.getLog().getValue();
-//
-//            }
-//        });
-
         //    初始化控件
         initiateView();
 
-//        //model初始化
-//        model = ViewModelProviders.of(this).get(SharedViewModel.class);
-//        model.logout();
-//        //初始是未登录状态
-//        log = false;
-////        ((fragment1) sectionsPagerAdapter.getItem(0)).changeLogMode(log);
-//        model.getLog().observe(this, new Observer<Boolean>() {
-//            @Override
-//            public void onChanged(Boolean b) {
-//                log = model.getLog().getValue();
-//            }
-//        });
+        //TODO: 测试阶段默认自动登录
+//        UserStatus userStatus = new UserStatus(getContext());
+//        if(true){
+//            userStatus.login(1002,"18301038","111111",true);
+//        }
+
     }
 
 
@@ -90,63 +75,74 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        侧边栏布局
+        //    侧边栏布局
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        设置actionbar（即toolbar）最左侧按钮功能，点击唤出侧边栏
+        //   设置actionbar（即toolbar）最左侧按钮功能，点击唤出侧边栏
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24);
+            actionBar.setDisplayShowTitleEnabled(false);
         }
 
-//        设置NavigationView布局
+        //  设置NavigationView布局
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-//        将NavigationView中的call作为默认选项选中
+        //   将NavigationView中的call作为默认选项选中
         navView.setCheckedItem(R.id.nav_call);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             //侧边栏按键点击
             public boolean onNavigationItemSelected(MenuItem item) {
-//                点击NavigationView中选项关闭侧边栏
+        //     点击NavigationView中选项关闭侧边栏
                 mDrawerLayout.closeDrawers();
                 return true;
             }
         });
+        //  根据用户是否登录改变侧边栏headerLayout样式
+        //TODO:登录相关
+        String appkey = "de0d0d10141439f301fc9d139da66920";
+        Bmob.initialize(getContext(),appkey);
+        View headview=navView.inflateHeaderView(R.layout.nav_header);
+        RelativeLayout loggedLayout = (RelativeLayout)headview.findViewById(R.id.loggedLayout);
+        RelativeLayout unloggedLayout = (RelativeLayout)headview.findViewById(R.id.unloggedLayout);
+        if (BmobUser.isLogin()) {
+            loggedLayout.setVisibility(View.VISIBLE);
+            unloggedLayout.setVisibility(View.GONE);
+//            User user = BmobUser.getCurrentUser(User.class);
+//            Snackbar.make(view, "已经登录：" + user.getUsername(), Snackbar.LENGTH_LONG).show();
+        } else {
+            loggedLayout.setVisibility(View.GONE);
+            unloggedLayout.setVisibility(View.VISIBLE);
+            Button loginButton = (Button) headview.findViewById(R.id.loginButton);
+            loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), LoginActivity.class);
+//                Bundle bundle=new Bundle();
+//                bundle.putString("type", "new");
+//                intent.putExtras(bundle);
+                    //TODO:收到结果时决定是否刷新布局为登录状态
+                    startActivityForResult(intent,1);
+                }
+            });
+        }
 
-//        悬浮按钮
+
+        //        悬浮按钮
         FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "Data deleted", Snackbar.LENGTH_SHORT)
-                        .setAction("Undo", new View.OnClickListener() {
+                Snackbar.make(v, "要新建会议吗（测试会议）", Snackbar.LENGTH_SHORT)
+                        .setAction("是的", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
 
-                                Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
-                                Meeting m = new Meeting();
-                                m.setName("会议x");
-                                m.setComtent("123412345");
-//                                Date date = new Date(System.currentTimeMillis());
-//                                Time time = new Time(LocalTime);
-//                                m.setHostDate(System.currentTimeMillis().);?
-//                                m.setRegistrationDate(date);
-                                m.setIntroduction("jianjie");
-                                m.setLength("两小时");
-                                m.setLocation("sy108");
-                                m.setOrganizer("18301038");
-                                m.save(new SaveListener<String>() {
-                                    @Override
-                                    public void done(String objectId, BmobException e) {
-                                        if(e==null){
-                                            Toast.makeText(MainActivity.this, "添加数据成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
-                                        }else{
-                                            Toast.makeText(MainActivity.this, "创建数据失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-
-//                                Toast.makeText(MainActivity.this, "Data restored", Toast.LENGTH_SHORT).show();
+                                doBomb dobomb = new doBomb(getContext());
+                                dobomb.addMeetingTest();
+                                UserStatus userStatus = new UserStatus(getContext());
+                                Toast.makeText(getContext(), userStatus.getName()+"   "+userStatus.getId(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();
@@ -205,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             //文字输入完成，提交的回调
             @Override
             public boolean onQueryTextSubmit(String s) {
-//                TODO: 获得fragment实例并调用refresh
+            //    TODO: 获得fragment实例并调用refresh
                 ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,viewPager.getCurrentItem())).refresh(s);
                 return true;
             }

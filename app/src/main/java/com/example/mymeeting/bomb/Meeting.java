@@ -5,6 +5,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import java.util.Date;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobRelation;
 
 
 public class Meeting extends BmobObject {
@@ -28,9 +29,14 @@ public class Meeting extends BmobObject {
     private String comtent; // 详细内容
 //    private Number imageId;
 
-    private Number userId;
+//    private Number userId;  //申请人id（已弃用）
 
     private String organizer;//举办方（不一定是申请人）
+
+
+    private _User originator; //发起人，一对一关系
+
+    private BmobRelation participant;//与会者，一对多关系
 
 
     //////////
@@ -38,10 +44,6 @@ public class Meeting extends BmobObject {
 
     public void setId(Number id) {
         this.id = id;
-    }
-
-    public void setUserId(Number userId) {
-        this.userId = userId;
     }
 
     public void setName(String name) {
@@ -96,6 +98,14 @@ public class Meeting extends BmobObject {
         this.location = location;
     }
 
+    public void setOriginator(_User originator) {
+        this.originator = originator;
+    }
+
+    public void setParticipant(BmobRelation participant) {
+        this.participant = participant;
+    }
+
     public Number getId() {
         return id;
     }
@@ -144,10 +154,6 @@ public class Meeting extends BmobObject {
         return name;
     }
 
-    public Number getUserId() {
-        return userId;
-    }
-
     public BmobDate getHostDate() {
         return hostDate;
     }
@@ -156,4 +162,11 @@ public class Meeting extends BmobObject {
         return registrationDate;
     }
 
+    public _User getOriginator() {
+        return originator;
+    }
+
+    public BmobRelation getParticipant() {
+        return participant;
+    }
 }
