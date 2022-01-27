@@ -1,5 +1,6 @@
 package com.example.mymeeting;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -50,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
     SectionsPagerAdapter sectionsPagerAdapter;
     ViewPager viewPager;
 
+    //  侧边栏头部布局
+    RelativeLayout loggedLayout;
+    RelativeLayout unloggedLayout;
+
+    String appkey = "de0d0d10141439f301fc9d139da66920";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         initiateView();
 
         //TODO: 测试阶段默认自动登录
+        //TODO: BombUser自带自动登录功能
 //        UserStatus userStatus = new UserStatus(getContext());
 //        if(true){
 //            userStatus.login(1002,"18301038","111111",true);
@@ -100,11 +108,32 @@ public class MainActivity extends AppCompatActivity {
         });
         //  根据用户是否登录改变侧边栏headerLayout样式
         //TODO:登录相关
-        String appkey = "de0d0d10141439f301fc9d139da66920";
         Bmob.initialize(getContext(),appkey);
         View headview=navView.inflateHeaderView(R.layout.nav_header);
-        RelativeLayout loggedLayout = (RelativeLayout)headview.findViewById(R.id.loggedLayout);
-        RelativeLayout unloggedLayout = (RelativeLayout)headview.findViewById(R.id.unloggedLayout);
+        loggedLayout = (RelativeLayout)headview.findViewById(R.id.loggedLayout);
+        unloggedLayout = (RelativeLayout)headview.findViewById(R.id.unloggedLayout);
+        Button logoutButton = (Button) headview.findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BmobUser.logOut();
+                loggedLayout.setVisibility(View.GONE);
+                unloggedLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        Button loginButton = (Button) headview.findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), LoginActivity.class);
+//                Bundle bundle=new Bundle();
+//                bundle.putString("type", "new");
+//                intent.putExtras(bundle);
+                //TODO:收到结果时决定是否刷新布局为登录状态
+                startActivityForResult(intent,1);
+            }
+        });
         if (BmobUser.isLogin()) {
             loggedLayout.setVisibility(View.VISIBLE);
             unloggedLayout.setVisibility(View.GONE);
@@ -113,19 +142,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             loggedLayout.setVisibility(View.GONE);
             unloggedLayout.setVisibility(View.VISIBLE);
-            Button loginButton = (Button) headview.findViewById(R.id.loginButton);
-            loginButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), LoginActivity.class);
-//                Bundle bundle=new Bundle();
-//                bundle.putString("type", "new");
-//                intent.putExtras(bundle);
-                    //TODO:收到结果时决定是否刷新布局为登录状态
-                    startActivityForResult(intent,1);
-                }
-            });
         }
 
 
@@ -140,9 +156,10 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(View v) {
 
                                 doBomb dobomb = new doBomb(getContext());
-                                dobomb.addMeetingTest();
-                                UserStatus userStatus = new UserStatus(getContext());
-                                Toast.makeText(getContext(), userStatus.getName()+"   "+userStatus.getId(), Toast.LENGTH_SHORT).show();
+//                                dobomb.addMeetingTest();
+//                                dobomb.searchAllMeeting();
+                                dobomb.searchAttendingMeeting();
+
                             }
                         })
                         .show();
@@ -222,5 +239,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    /**
+     * 接收活动返回结果
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+                if(resultCode==RESULT_OK){
+                    Boolean if_login = data.getBooleanExtra("login", false);
+                    if(if_login==true){
+                        loggedLayout.setVisibility(View.VISIBLE);
+                        unloggedLayout.setVisibility(View.GONE);
+                    }
+                    //TODO:登录成功，刷新侧边栏头部，并且刷新两个fragment获取数据
+                }
+                break;
+
+        default:
+        }
     }
 }

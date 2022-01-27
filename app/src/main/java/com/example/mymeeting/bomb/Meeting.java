@@ -39,6 +39,9 @@ public class Meeting extends BmobObject {
     private BmobRelation participant;//与会者，一对多关系
 
 
+//    private String objectId;  //不可设置，否则会出BmobObject的那个问题
+
+
     //////////
 
 

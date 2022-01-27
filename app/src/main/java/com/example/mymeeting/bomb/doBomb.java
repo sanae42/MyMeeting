@@ -9,11 +9,17 @@ import com.example.mymeeting.sp.UserStatus;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
 import static org.litepal.LitePalApplication.getContext;
@@ -54,18 +60,67 @@ public class doBomb {
     }
 
 
+    public void searchAllMeeting(){
+        BmobQuery<Meeting> bmobQuery = new BmobQuery<>();
+        bmobQuery.findObjects(new FindListener<Meeting>() {
+            @Override
+            public void done(List<Meeting> list, BmobException e) {
+                for (Meeting meeting: list){
+                    if(meeting.getOriginator()!=null)
+                    Log.d(TAG, "会议："+meeting.getId()+meeting.getName()+meeting.getOriginator().getObjectId());
+                }
+            }
+        });
+
+    }
+
+    public void searchAttendingMeeting(){
+        BmobQuery<Meeting> bmobQuery = new BmobQuery<>();
+        String userObjectId = BmobUser.getCurrentUser(_User.class).getObjectId();
+        bmobQuery.findObjects(new FindListener<Meeting>() {
+            @Override
+            public void done(List<Meeting> list, BmobException e) {
+                for (Meeting meeting: list){
+//                    if(meeting.getOriginator()!=null)
+//                        Log.d(TAG, "会议："+meeting.getId()+meeting.getName()+meeting.getOriginator().getObjectId());
+                    BmobQuery<_User> query = new BmobQuery<_User>();
+                    query.addWhereRelatedTo("participant", new BmobPointer(meeting));
+                    query.findObjects(new FindListener<_User>() {
+                        @Override
+                        public void done(List<_User> list, BmobException e) {
+                            for (_User user:list){
+                                if (userObjectId.equals(user.getObjectId()))
+                                {
+                                    Log.d(TAG, "会议："+meeting.getId());
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+    }
+
+
     public Boolean addMeetingTest(){
         Meeting meeting = new Meeting();
-        meeting.setName("测试会议x");
-        meeting.setComtent("123412345");
-        meeting.setIntroduction("jianjie");
-        meeting.setLength("两小时");
+        meeting.setName("测试会议1");
+        meeting.setComtent("这是一个测试会议这是一个测试会议这是一个测试会议这是一个测试会议这是一个测试会议");
+        meeting.setIntroduction("测试会议参会者关联");
+        meeting.setLength("2小时");
         meeting.setLocation("sy108");
-        meeting.setOrganizer("18301038");
+        meeting.setOrganizer("学生会文化部");
 
         BmobDate bmobDate= new BmobDate(new Date());
         meeting.setHostDate(bmobDate);
         meeting.setRegistrationDate(bmobDate);
+        meeting.setOriginator(BmobUser.getCurrentUser(_User.class));
+
+        _User user = BmobUser.getCurrentUser(_User.class);
+        BmobRelation relation = new BmobRelation();
+        relation.add(user);
+        meeting.setParticipant(relation);
 
         //TODO:buxing,需要单独传id viewModel也得需要context
 //        UserStatus userStatus = new UserStatus(context);
