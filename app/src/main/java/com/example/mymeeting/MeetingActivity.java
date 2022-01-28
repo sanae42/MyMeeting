@@ -15,9 +15,19 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 public class MeetingActivity extends AppCompatActivity {
 
-    public static final String MEETING_NAME = "fruit_name";
 
-    public static final String MEETING_IMAGE_ID = "fruit_image_id";
+//    public static final String MEETING_NAME = "fruit_name";
+//
+//    public static final String MEETING_IMAGE_ID = "fruit_image_id";
+//
+//    public static final String OBJECT_ID = "";
+//
+//    public static final String TEXT = "";
+
+//    public static final meetingItem MEETING_ITEM = null;
+
+    //TODO:传参可以用传递class
+    meetingItem meeting;
 
 //    TODO：状态栏透明化暂未实现
 
@@ -28,8 +38,13 @@ public class MeetingActivity extends AppCompatActivity {
 
         //从跳转的活动得到传值
         Intent intent = getIntent();
-        String fruitName = intent.getStringExtra(MEETING_NAME);
-        int fruitImageId = intent.getIntExtra(MEETING_IMAGE_ID, 0);
+//        meetingItem defaultMeetingItem = new meetingItem();
+        meeting = (meetingItem)intent.getSerializableExtra("meeting_item");
+//        String fruitName = intent.getStringExtra(MEETING_NAME);
+//        int fruitImageId = intent.getIntExtra(MEETING_IMAGE_ID, 0);
+//        String objectId = intent.getStringExtra(OBJECT_ID);
+//        String text = intent.getStringExtra(TEXT);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
@@ -40,17 +55,21 @@ public class MeetingActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        collapsingToolbar.setTitle(fruitName);
-        Glide.with(this).load(fruitImageId).into(fruitImageView);
-        String fruitContent = generateFruitContent(fruitName);
+        collapsingToolbar.setTitle(meeting.getName()+""+meeting.getObjectId());
+        Glide.with(this).load(meeting.getImageId()).into(fruitImageView);
+        String fruitContent = generateFruitContent(meeting.getComtent());
+//        if(meeting.getIfOriginator()==true)fruitContent.concat(" 是申请者");
+        if(meeting.getIfOriginator()==true)fruitContent="sdfgfdsdfghgfd";
+        if(meeting.getIfParticipant()==true)fruitContent="++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
         fruitContentText.setText(fruitContent);
     }
 
-    private String generateFruitContent(String fruitName) {
+    private String generateFruitContent(String text) {
         StringBuilder fruitContent = new StringBuilder();
-        for (int i = 0; i < 500; i++) {
-            fruitContent.append(fruitName);
-        }
+        fruitContent.append(text);
+//        for (int i = 0; i < 500; i++) {
+//            fruitContent.append(fruitName);
+//        }
         return fruitContent.toString();
     }
 

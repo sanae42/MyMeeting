@@ -7,6 +7,9 @@ import android.widget.Toast;
 import com.example.mymeeting.MainActivity;
 import com.example.mymeeting.sp.UserStatus;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +94,16 @@ public class doBomb {
                             for (_User user:list){
                                 if (userObjectId.equals(user.getObjectId()))
                                 {
-                                    Log.d(TAG, "会议："+meeting.getId());
+                                    String str=meeting.getRegistrationDate().getDate();
+                                    SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                                    Date date=new Date();
+                                    try {
+                                        date=format.parse(str);
+                                    } catch (ParseException parseException) {
+                                        parseException.printStackTrace();
+                                    }
+                                    Log.d(TAG, "会议："+ date.toString());
                                 }
                             }
                         }

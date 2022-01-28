@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -154,11 +155,19 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("是的", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
-                                doBomb dobomb = new doBomb(getContext());
-//                                dobomb.addMeetingTest();
-//                                dobomb.searchAllMeeting();
-                                dobomb.searchAttendingMeeting();
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), EditMeetingActivity.class);
+                                startActivityForResult(intent,2);
+//                                if(BmobUser.isLogin()){
+//                                    doBomb dobomb = new doBomb(getContext());
+////                                dobomb.addMeetingTest();
+////                                dobomb.searchAllMeeting();
+//                                    dobomb.searchAttendingMeeting();
+//                                }
+//                                else {
+//                                    //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+//                                    Toast.makeText(getContext(), "请在登录后再操作", Toast.LENGTH_SHORT).show();
+//                                }
 
                             }
                         })
@@ -229,6 +238,13 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return false;
+            }
+        });
+
 
         //点击搜索图标，搜索框展开时的回调
         searchView.setOnSearchClickListener(new View.OnClickListener() {
