@@ -2,13 +2,15 @@ package com.example.mymeeting;
 
 import com.example.mymeeting.bomb._User;
 
+import org.litepal.crud.LitePalSupport;
+
 import java.io.Serializable;
 import java.util.Date;
 
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobRelation;
 
-public class meetingItem implements Serializable {
+public class meetingItem  extends LitePalSupport implements Serializable {
 
     private String objectId;  //bomb数据库的id
 

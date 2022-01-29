@@ -7,10 +7,12 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.mymeeting.bomb.Meeting;
+import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.bomb.doBomb;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
 import com.example.mymeeting.sp.UserStatus;
@@ -28,19 +31,31 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import org.litepal.crud.DataSupport;
+import org.litepal.exceptions.DataSupportException;
+import org.litepal.tablemanager.Connector;
+
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static org.litepal.LitePalApplication.getContext;
 
 public class MainActivity extends AppCompatActivity {
+
+    final String TAG = "MainActivity";
 
     //    侧边栏
     private DrawerLayout mDrawerLayout;
@@ -65,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         //    初始化控件
         initiateView();
+        Connector.getDatabase(); //执行任何一次数据库操作，初始化数据库
 
         //TODO: 测试阶段默认自动登录
         //TODO: BombUser自带自动登录功能
@@ -72,11 +88,11 @@ public class MainActivity extends AppCompatActivity {
 //        if(true){
 //            userStatus.login(1002,"18301038","111111",true);
 //        }
+        getDataFromBomb();
+
+        Log.d(TAG, "pear："+R.drawable.pear);
 
     }
-
-    public void ttt(){}
-
 
     /**
      * 初始化控件
@@ -109,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         //  根据用户是否登录改变侧边栏headerLayout样式
         //TODO:登录相关
         Bmob.initialize(getContext(),appkey);
@@ -177,6 +194,117 @@ public class MainActivity extends AppCompatActivity {
         //tab(上方切换条)
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+    }
+
+
+    public void getDataFromBomb(){
+        if(BmobUser.isLogin()==false){
+            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String userObjectId = BmobUser.getCurrentUser(_User.class).getObjectId();
+                Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
+                BmobQuery<Meeting> bmobQuery = new BmobQuery<>();
+                bmobQuery.findObjects(new FindListener<Meeting>() {
+                    @Override
+                    public void done(List<Meeting> list, BmobException e) {
+                        if(e==null){
+                            Log.d(TAG, "获取服务器数据成功，list长度："+list.size());
+                            //清空本地数据库会议表
+                            DataSupport.deleteAll(meetingItem.class);
+
+                            final Integer[] count = {0};
+                            Integer sum = list.size();
+                            //循环
+                            for(Meeting meeting : list){
+                                meetingItem m= new meetingItem();
+                                m.setObjectId(meeting.getObjectId());
+                                m.setName(meeting.getName());
+                                m.setType(meeting.getType());
+                                m.setTypeNumber(meeting.getTypeNumber());
+                                Date date1 = new Date();
+                                SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                try {
+                                    if(meeting.getRegistrationDate()!=null)
+                                        date1=format.parse(meeting.getRegistrationDate().getDate());
+                                } catch (ParseException parseException) {
+                                    parseException.printStackTrace();
+                                }
+                                m.setRegistrationDate(date1);
+                                Date date2 = new Date();
+                                try {
+                                    if(meeting.getHostDate()!=null)
+                                        date2=format.parse(meeting.getHostDate().getDate());
+                                } catch (ParseException parseException) {
+                                    parseException.printStackTrace();
+                                }
+                                m.setHostDate(date2);
+                                m.setLength(meeting.getLength());
+                                m.setLocation(meeting.getLocation());
+                                m.setLocationNumber(meeting.getLocationNumber());
+                                m.setState(meeting.getState());
+                                m.setLocationNumber(meeting.getStateNumber());
+                                m.setIntroduction(meeting.getIntroduction());
+                                m.setComtent(meeting.getComtent());
+                                m.setImageId(R.drawable.pear); //
+                                m.setOrganizer(meeting.getOrganizer());
+
+
+                                //TODO：设置是否申请和是否参会
+                                m.setIfOriginator(false);
+                                m.setIfParticipant(false);
+
+                                if(meeting.getOriginator()!=null)
+                                    if(meeting.getOriginator().getObjectId().equals(userObjectId)){
+                                        m.setIfOriginator(true);
+                                        Log.d(TAG, "找到申请者：");
+                                    }
+
+
+                                BmobQuery<_User> query_p = new BmobQuery<_User>();
+                                query_p.addWhereRelatedTo("participant", new BmobPointer(meeting));
+                                query_p.findObjects(new FindListener<_User>() {
+                                    @Override
+                                    public void done(List<_User> list, BmobException e) {
+                                        for (_User user:list){
+                                            if (userObjectId.equals(user.getObjectId()))
+                                            {
+                                                m.setIfParticipant(true);
+                                                Log.d(TAG, "找到参会者："+ m.getIfParticipant() + meeting.getId());
+                                                break;
+                                            }
+                                        }
+                                        count[0] ++;
+                                        //TODO:在这里把m加入本地数据库
+                                        m.save();
+                                        if(count[0] == sum){
+                                            //TODO:返回主线程位置3 终于对了
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
+                                                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
+                                                    List<meetingItem> meetings = DataSupport.findAll(meetingItem.class);
+
+                                                    Log.d(TAG, "pear："+meetings.get(1).getImageId());
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                            //TODO:返回主线程位置2
+                        }else{
+                            Log.d(TAG, "获取服务器数据失败：" + e.getMessage());
+                        }
+                    }
+                });
+                //TODO:返回主线程位置1
+            }
+        }).start();
     }
 
 
@@ -265,15 +393,17 @@ public class MainActivity extends AppCompatActivity {
                         loggedLayout.setVisibility(View.VISIBLE);
                         unloggedLayout.setVisibility(View.GONE);
                     }
-                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromBomb();
-                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,2)).getDataFromBomb();
+                    getDataFromBomb();
+//                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
+//                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                 }
                 break;
             case 2:
                 if(resultCode==RESULT_OK){
                     //新增/编辑会议成功，刷新侧边栏头部，并且刷新两个fragment获取数据
-                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromBomb();
-                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromBomb();
+                    getDataFromBomb();
+//                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
+//                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                 }
                 break;
 
