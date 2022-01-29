@@ -7,11 +7,13 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MeetingActivity extends AppCompatActivity {
 
@@ -38,12 +40,7 @@ public class MeetingActivity extends AppCompatActivity {
 
         //从跳转的活动得到传值
         Intent intent = getIntent();
-//        meetingItem defaultMeetingItem = new meetingItem();
         meeting = (meetingItem)intent.getSerializableExtra("meeting_item");
-//        String fruitName = intent.getStringExtra(MEETING_NAME);
-//        int fruitImageId = intent.getIntExtra(MEETING_IMAGE_ID, 0);
-//        String objectId = intent.getStringExtra(OBJECT_ID);
-//        String text = intent.getStringExtra(TEXT);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -62,6 +59,25 @@ public class MeetingActivity extends AppCompatActivity {
         if(meeting.getIfOriginator()==true)fruitContent="sdfgfdsdfghgfd";
         if(meeting.getIfParticipant()==true)fruitContent="++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
         fruitContentText.setText(fruitContent);
+
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+        if(meeting.getIfParticipant()==false){
+            fab.setImageResource(R.drawable.attend);
+        }else if(meeting.getIfParticipant()==true){
+            fab.setImageResource(R.drawable.leave);
+        }
+        //TODO：设置通过点按fab参加和退出会议，修改bomb成功后退出到主活动并刷新
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(meeting.getIfParticipant()==false){
+
+                }else if(meeting.getIfParticipant()==true){
+
+                }
+            }
+        });
+
     }
 
     private String generateFruitContent(String text) {

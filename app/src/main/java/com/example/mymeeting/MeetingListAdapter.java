@@ -53,17 +53,18 @@ public class MeetingListAdapter extends RecyclerView.Adapter<MeetingListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         meetingItem meetingItem = mMeetingItemList.get(position);
+        //recyclerView的item样式设置
         holder.meetingName.setText(meetingItem.getName());
+        holder.meetingDate.setText(meetingItem.getHostDate().toString());
+        holder.meetingLocation.setText(meetingItem.getLocation());
         Glide.with(mContext).load(meetingItem.getImageId()).into(holder.meetingImage);
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 meetingItem meetingItem = mMeetingItemList.get(position);
                 Intent intent = new Intent(mContext, MeetingActivity.class);
-//                intent.putExtra(MeetingActivity.MEETING_NAME, meetingItem.getName());
-//                intent.putExtra(MeetingActivity.MEETING_IMAGE_ID, meetingItem.getImageId());
-//                intent.putExtra(MeetingActivity.OBJECT_ID,meetingItem.getObjectId());
-//                intent.putExtra(MeetingActivity.TEXT,meetingItem.getObjectId());
+
+                //传递序列化的meetingItem到MeetingActivity
                 intent.putExtra("meeting_item",meetingItem);
                 mContext.startActivity(intent);
             }
@@ -79,12 +80,16 @@ public class MeetingListAdapter extends RecyclerView.Adapter<MeetingListAdapter.
         CardView cardView;
         ImageView meetingImage;
         TextView meetingName;
+        TextView meetingDate;
+        TextView meetingLocation;
 
         public ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
             meetingImage = (ImageView) view.findViewById(R.id.meeting_image);
             meetingName = (TextView) view.findViewById(R.id.meeting_name);
+            meetingDate = (TextView) view.findViewById(R.id.meeting_date);
+            meetingLocation = (TextView) view.findViewById(R.id.meeting_location);
         }
     }
 }
