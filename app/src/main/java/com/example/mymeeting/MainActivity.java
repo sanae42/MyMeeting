@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void ttt(){}
+
 
     /**
      * 初始化控件
@@ -157,18 +159,10 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), EditMeetingActivity.class);
+                                //设置活动跳转传值为：新建活动
+                                intent.putExtra("type","new");
                                 startActivityForResult(intent,2);
-//                                if(BmobUser.isLogin()){
-//                                    doBomb dobomb = new doBomb(getContext());
-////                                dobomb.addMeetingTest();
-////                                dobomb.searchAllMeeting();
-//                                    dobomb.searchAttendingMeeting();
-//                                }
-//                                else {
-//                                    //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
-//                                    Toast.makeText(getContext(), "请在登录后再操作", Toast.LENGTH_SHORT).show();
-//                                }
-
+//                            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
                             }
                         })
                         .show();
@@ -227,30 +221,28 @@ public class MainActivity extends AppCompatActivity {
             //文字输入完成，提交的回调
             @Override
             public boolean onQueryTextSubmit(String s) {
-            //    TODO: 获得fragment实例并调用refresh
-                ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,viewPager.getCurrentItem())).refresh(s);
                 return true;
             }
 
             //输入文字发生改变
             @Override
             public boolean onQueryTextChange(String s) {
-                return false;
+                //   获得fragment实例并调用refresh
+                ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,viewPager.getCurrentItem())).refresh(s);
+                return true;
             }
         });
+        //关闭搜索框时的回调
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
                 return false;
             }
         });
-
-
         //点击搜索图标，搜索框展开时的回调
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
 
@@ -267,12 +259,21 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode){
             case 1:
                 if(resultCode==RESULT_OK){
+                    //登录成功，刷新侧边栏头部，并且刷新两个fragment获取数据
                     Boolean if_login = data.getBooleanExtra("login", false);
                     if(if_login==true){
                         loggedLayout.setVisibility(View.VISIBLE);
                         unloggedLayout.setVisibility(View.GONE);
                     }
-                    //TODO:登录成功，刷新侧边栏头部，并且刷新两个fragment获取数据
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromBomb();
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,2)).getDataFromBomb();
+                }
+                break;
+            case 2:
+                if(resultCode==RESULT_OK){
+                    //新增/编辑会议成功，刷新侧边栏头部，并且刷新两个fragment获取数据
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromBomb();
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromBomb();
                 }
                 break;
 

@@ -65,6 +65,8 @@
                             android:fontFamily="sans-serif-black"
                             android:textSize="24dp"/>
 
+
+
                         <EditText
                             android:id="@+id/nameEditText"
                             android:layout_width="match_parent"
@@ -73,6 +75,7 @@
                             android:hint="请输入会议名"
                             android:inputType="text"/>
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/introductionEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -85,6 +88,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_margin="10dp"
+                            android:textSize="16dp"
                             android:text="会议类型"
                             android:id="@+id/typeSpinner" />
 
@@ -122,6 +126,7 @@
                             android:hint="请输入会议举办方"
                             android:inputType="text"/>
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/contentEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -136,6 +141,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_margin="10dp"
                             android:text="会议地点"
+                            android:textSize="16dp"
                             android:id="@+id/locationSpinner" />
 
                     </LinearLayout>
@@ -172,13 +178,21 @@
                             android:hint="请输入会议预期时长"
                             android:inputType="text"/>
                         
-                        <CalendarView
+<!--                        <CalendarView-->
+<!--                            android:id="@+id/hostTimeCalendar"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin="10dp">-->
+
+<!--                        </CalendarView>-->
+                        <com.haibin.calendarview.CalendarView
                             android:id="@+id/hostTimeCalendar"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="10dp">
+                            android:layout_margin="10dp"
+                            >
 
-                        </CalendarView>
+                        </com.haibin.calendarview.CalendarView>
                         <TimePicker
                             android:id="@+id/hostTimePicker"
                             android:layout_width="match_parent"

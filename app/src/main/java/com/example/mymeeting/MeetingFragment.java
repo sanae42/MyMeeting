@@ -286,35 +286,14 @@ public class MeetingFragment extends Fragment {
     public void refresh(String s)
     {
 //        Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-        List<meetingItem> newList = new ArrayList<>();
-        for(meetingItem f: meetingItemList){
-            if(f.getName().equals("Pear")==true){
-                newList.add(f);
-//                Log.d(this.toString(), "有一个梨子");
-            }
-        }
         meetingItemList.clear();
-        for(meetingItem f: newList){
-            meetingItemList.add(f);
+        for(meetingItem m: backupList){
+            if(m.getName().indexOf(s)!=-1)
+                meetingItemList.add(m);
         }
-
         adapter.notifyDataSetChanged();
 
-    }
 
-    //    TODO：登录相关功能ViewModel暂未启用
-//    public void changeLogMode(Boolean bool){
-//        log = bool;
-//        RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.relativeLayout);
-//        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh);
-//        if (bool == false){
-//            relativeLayout.setVisibility(View.VISIBLE);
-//            swipeRefreshLayout.setVisibility(View.GONE);
-//        }
-//        else {
-//            relativeLayout.setVisibility(View.GONE);
-//            swipeRefreshLayout.setVisibility(View.VISIBLE);
-//        }
-//    }
+    }
 
 }
