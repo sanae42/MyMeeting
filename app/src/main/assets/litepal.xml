@@ -3,8 +3,8 @@
 <!--数据库名-->
     <dbname value="myMeeting" />
 
-<!--  数据库版本1-->
-    <version value="1" />
+<!--  数据库版本2-->
+    <version value="2" />
 
     <list>
 <!--        <mapping class="com.example.mymeeting.db.MeetingData" />-->

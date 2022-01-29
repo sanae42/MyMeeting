@@ -34,6 +34,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
@@ -175,13 +176,39 @@ public class EditMeetingActivity extends AppCompatActivity {
         meeting.save(new SaveListener<String>() {
             @Override
             public void done(String objectId, BmobException e) {
+                //TODO: ****_User表中有attendingMeeting的版本
                 if(e==null){
                     Log.d(TAG, "创建会议成功，返回objectId为："+objectId);
                     Toast.makeText(getContext(), "创建会议成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
-                    //返回主活动，刷新两个列表
-                    Intent intent = new Intent();
-                    setResult(RESULT_OK,intent);
-                    finish();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BmobRelation relation = new BmobRelation();
+                            Meeting m = new Meeting();
+                            m.setObjectId(objectId);
+                            relation.add(m);
+                            _User u = new _User();
+                            u.setObjectId(BmobUser.getCurrentUser().getObjectId());
+                            u.setAttendingMeeting(relation);
+                            u.update(new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    if(e==null){
+                                        Log.d(TAG, "会议和当前用户参会绑定成功");
+                                        //返回主活动，刷新两个列表
+                                        Intent intent = new Intent();
+                                        setResult(RESULT_OK,intent);
+                                        finish();
+                                    }else{
+                                        Log.d(TAG, "会议和当前用户参会绑定失败"+e.getMessage());
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+
                 }else{
                     Log.d(TAG, "创建会议失败：" + e.getMessage());
                     Toast.makeText(getContext(), "创建会议失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();

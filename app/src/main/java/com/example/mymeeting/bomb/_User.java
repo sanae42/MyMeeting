@@ -2,6 +2,7 @@ package com.example.mymeeting.bomb;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobRelation;
 
 public class _User extends BmobUser {
 //    private String username; //用户名/账号/用户唯一标志，可以是邮箱、手机号码、第三方平台的用户唯一标志
@@ -17,9 +18,28 @@ public class _User extends BmobUser {
 //    private Boolean emailVerified;
     private Boolean sex;
     private String nick;
+
+    private BmobRelation attendingMeeting;//参加会议，一对多关系
 //
 //    //////////////
-//
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+    public void setAttendingMeeting(BmobRelation attendingMeeting) {
+        this.attendingMeeting = attendingMeeting;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public BmobRelation getAttendingMeeting() {
+        return attendingMeeting;
+    }
+
+    //
 //    @Override
 //    public void setPassword(String password) {
 //        this.password = password;

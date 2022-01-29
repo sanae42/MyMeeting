@@ -106,8 +106,9 @@ public class MeetingFragment extends Fragment {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                //TODO: ****_User表中有attendingMeeting的版本
                 MainActivity parentActivity = (MainActivity ) getActivity();
-                parentActivity.getDataFromBomb();
+                parentActivity.getAttendingMeetingFromBomb();
             }
         });
 

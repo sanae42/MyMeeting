@@ -39,6 +39,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     String appkey = "de0d0d10141439f301fc9d139da66920";
 
+    //TODO: ****_User表中有attendingMeeting的版本
+    private List<Meeting> attendingMeetingList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
 //        if(true){
 //            userStatus.login(1002,"18301038","111111",true);
 //        }
-        getDataFromBomb();
+
+        //TODO: ****_User表中有attendingMeeting的版本
+        getAttendingMeetingFromBomb();
 
         Log.d(TAG, "pear："+R.drawable.pear);
 
@@ -196,8 +202,35 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
     }
 
+    public void getAttendingMeetingFromBomb(){
+        if(BmobUser.isLogin()==false){
+            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+            return;
+        }
+        BmobQuery<Meeting> query = new BmobQuery<Meeting>();
+        query.addWhereRelatedTo("attendingMeeting", new BmobPointer(BmobUser.getCurrentUser()));
+        query.findObjects(new FindListener<Meeting>() {
+            @Override
+            public void done(List<Meeting> list, BmobException e) {
+                if(e==null){
+                    attendingMeetingList.clear();
+                    for(Meeting M:list){
+                        attendingMeetingList.add(M);
+                    }
 
-    public void getDataFromBomb(){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getDataFromBombVersion2();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    //TODO: ****_User表中有attendingMeeting的版本
+    public void getDataFromBombVersion2(){
         if(BmobUser.isLogin()==false){
             //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
             return;
@@ -222,9 +255,10 @@ public class MainActivity extends AppCompatActivity {
                             for(Meeting meeting : list){
                                 meetingItem m= new meetingItem();
                                 m.setObjectId(meeting.getObjectId());
+                                m.setBombId(meeting.getId().intValue());
                                 m.setName(meeting.getName());
                                 m.setType(meeting.getType());
-                                m.setTypeNumber(meeting.getTypeNumber());
+                                m.setTypeNumber(0);
                                 Date date1 = new Date();
                                 SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 try {
@@ -244,9 +278,103 @@ public class MainActivity extends AppCompatActivity {
                                 m.setHostDate(date2);
                                 m.setLength(meeting.getLength());
                                 m.setLocation(meeting.getLocation());
-                                m.setLocationNumber(meeting.getLocationNumber());
+                                m.setLocationNumber(0);
                                 m.setState(meeting.getState());
-                                m.setLocationNumber(meeting.getStateNumber());
+                                m.setStateNumber(0);
+                                m.setIntroduction(meeting.getIntroduction());
+                                m.setComtent(meeting.getComtent());
+                                m.setImageId(R.drawable.pear); //
+                                m.setOrganizer(meeting.getOrganizer());
+
+
+                                //TODO：设置是否申请和是否参会
+                                m.setIfOriginator(false);
+                                m.setIfParticipant(false);
+
+                                if(meeting.getOriginator()!=null)
+                                    if(meeting.getOriginator().getObjectId().equals(userObjectId)){
+                                        m.setIfOriginator(true);
+                                        Log.d(TAG, "找到申请者：");
+                                    }
+                                for(Meeting M:attendingMeetingList){
+                                    if(M.getObjectId().equals(meeting.getObjectId())){
+                                        m.setIfParticipant(true);
+                                        Log.d(TAG, "找到参加者：");
+                                    }
+                                }
+                                m.save();
+
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
+                                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
+                                }
+                            });
+                        }else{
+                            Log.d(TAG, "获取服务器数据失败：" + e.getMessage());
+                        }
+                    }
+                });
+                //TODO:返回主线程位置1
+            }
+        }).start();
+    }
+
+
+    public void getDataFromBombVersion1(){
+        if(BmobUser.isLogin()==false){
+            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String userObjectId = BmobUser.getCurrentUser(_User.class).getObjectId();
+                Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
+                BmobQuery<Meeting> bmobQuery = new BmobQuery<>();
+                bmobQuery.findObjects(new FindListener<Meeting>() {
+                    @Override
+                    public void done(List<Meeting> list, BmobException e) {
+                        if(e==null){
+                            Log.d(TAG, "获取服务器数据成功，list长度："+list.size());
+                            //清空本地数据库会议表
+                            DataSupport.deleteAll(meetingItem.class);
+
+                            final Integer[] count = {0};
+                            Integer sum = list.size();
+                            //循环
+                            for(Meeting meeting : list){
+                                meetingItem m= new meetingItem();
+                                m.setObjectId(meeting.getObjectId());
+                                m.setBombId(meeting.getId().intValue());
+                                m.setName(meeting.getName());
+                                m.setType(meeting.getType());
+                                m.setTypeNumber(0);
+                                Date date1 = new Date();
+                                SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                try {
+                                    if(meeting.getRegistrationDate()!=null)
+                                        date1=format.parse(meeting.getRegistrationDate().getDate());
+                                } catch (ParseException parseException) {
+                                    parseException.printStackTrace();
+                                }
+                                m.setRegistrationDate(date1);
+                                Date date2 = new Date();
+                                try {
+                                    if(meeting.getHostDate()!=null)
+                                        date2=format.parse(meeting.getHostDate().getDate());
+                                } catch (ParseException parseException) {
+                                    parseException.printStackTrace();
+                                }
+                                m.setHostDate(date2);
+                                m.setLength(meeting.getLength());
+                                m.setLocation(meeting.getLocation());
+                                m.setLocationNumber(0);
+                                m.setState(meeting.getState());
+                                m.setStateNumber(0);
                                 m.setIntroduction(meeting.getIntroduction());
                                 m.setComtent(meeting.getComtent());
                                 m.setImageId(R.drawable.pear); //
@@ -273,13 +401,14 @@ public class MainActivity extends AppCompatActivity {
                                             if (userObjectId.equals(user.getObjectId()))
                                             {
                                                 m.setIfParticipant(true);
-                                                Log.d(TAG, "找到参会者："+ m.getIfParticipant() + meeting.getId());
                                                 break;
                                             }
                                         }
                                         count[0] ++;
                                         //TODO:在这里把m加入本地数据库
                                         m.save();
+
+                                        Log.d(TAG, "pear："+m.getBombId());
                                         if(count[0] == sum){
                                             //TODO:返回主线程位置3 终于对了
                                             runOnUiThread(new Runnable() {
@@ -288,8 +417,22 @@ public class MainActivity extends AppCompatActivity {
                                                     ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
                                                     ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                                                     List<meetingItem> meetings = DataSupport.findAll(meetingItem.class);
+//                                                    Log.d(TAG, "pear：List<meetingItem>的长度为："+meetings.size());
+//                                                    if(meetings.size()!=0){
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getImageId());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getIfParticipant());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getIfOriginator());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getObjectId());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getBombId());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getName());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getIntroduction());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getComtent());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getLength());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getHostDate());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getType());
+//                                                        Log.d(TAG, "pear："+meetings.get(1).getLocation());
+//                                                    }
 
-                                                    Log.d(TAG, "pear："+meetings.get(1).getImageId());
                                                 }
                                             });
                                         }
@@ -393,7 +536,8 @@ public class MainActivity extends AppCompatActivity {
                         loggedLayout.setVisibility(View.VISIBLE);
                         unloggedLayout.setVisibility(View.GONE);
                     }
-                    getDataFromBomb();
+                    //TODO: ****_User表中有attendingMeeting的版本
+                    getAttendingMeetingFromBomb();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                 }
@@ -401,7 +545,8 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 if(resultCode==RESULT_OK){
                     //新增/编辑会议成功，刷新侧边栏头部，并且刷新两个fragment获取数据
-                    getDataFromBomb();
+                    //TODO: ****_User表中有attendingMeeting的版本
+                    getAttendingMeetingFromBomb();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                 }

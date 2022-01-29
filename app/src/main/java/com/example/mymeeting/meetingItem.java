@@ -14,26 +14,26 @@ public class meetingItem  extends LitePalSupport implements Serializable {
 
     private String objectId;  //bomb数据库的id
 
-    private Number id;  //主键 自增
+    private int bomb_id;  //主键 自增
     private String name;
     //
     private String type; //会议类型
-    private Number typeNumber;
+    private int typeNumber;
     //
     private Date registrationDate; //注册时间
     private Date hostDate; //举办时间
     private String length; //持续时间（字符串类型数据）
 
     private String location; //会议地点
-    private Number locationNumber;
+    private int locationNumber;
 
     private String state; //会议状态
-    private Number stateNumber;
+    private int stateNumber;
 
     private String introduction; //简介
     private String comtent; // 详细内容
 
-    private Number imageId; //图片id
+    private int imageId; //图片id
 
     private String organizer;//举办方（不一定是申请人）
 
@@ -45,19 +45,19 @@ public class meetingItem  extends LitePalSupport implements Serializable {
     //////////
 
 
-    public void setId(Number id) {
-        this.id = id;
+    public void setBombId(int id) {
+        this.bomb_id = id;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setTypeNumber(Number typeNumber) {
+    public void setTypeNumber(int typeNumber) {
         this.typeNumber = typeNumber;
     }
 
-    public void setStateNumber(Number stateNumber) {
+    public void setStateNumber(int stateNumber) {
         this.stateNumber = stateNumber;
     }
 
@@ -85,7 +85,7 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         this.type = type;
     }
 
-    public void setLocationNumber(Number locationNumber) {
+    public void setLocationNumber(int locationNumber) {
         this.locationNumber = locationNumber;
     }
 
@@ -101,7 +101,7 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         this.location = location;
     }
 
-    public void setImageId(Number imageId) {
+    public void setImageId(int imageId) {
         this.imageId = imageId;
     }
 
@@ -117,8 +117,8 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         this.objectId = objectId;
     }
 
-    public Number getId() {
-        return id;
+    public int getBombId() {
+        return bomb_id;
     }
 
     public String getLength() {
@@ -129,7 +129,7 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         return introduction;
     }
 
-    public Number getTypeNumber() {
+    public int getTypeNumber() {
         return typeNumber;
     }
 
@@ -141,7 +141,7 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         return organizer;
     }
 
-    public Number getLocationNumber() {
+    public int getLocationNumber() {
         return locationNumber;
     }
 
@@ -149,7 +149,7 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         return comtent;
     }
 
-    public Number getStateNumber() {
+    public int getStateNumber() {
         return stateNumber;
     }
 
@@ -173,7 +173,7 @@ public class meetingItem  extends LitePalSupport implements Serializable {
         return registrationDate;
     }
 
-    public Number getImageId() {
+    public int getImageId() {
         return imageId;
     }
 
