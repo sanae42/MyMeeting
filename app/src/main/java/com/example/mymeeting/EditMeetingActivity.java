@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,6 +59,9 @@ public class EditMeetingActivity extends AppCompatActivity {
 
     FloatingActionButton saveFab;
     FloatingActionButton quickSaveFab; //
+
+    //加载进度条
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +177,9 @@ public class EditMeetingActivity extends AppCompatActivity {
         relation.add(user);
         meeting.setParticipant(relation);
 
+        //展示进度条
+        showProgress();
+
         meeting.save(new SaveListener<String>() {
             @Override
             public void done(String objectId, BmobException e) {
@@ -201,6 +208,13 @@ public class EditMeetingActivity extends AppCompatActivity {
                                         setResult(RESULT_OK,intent);
                                         finish();
                                     }else{
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //取消展示进度条
+                                                progressDialog.dismiss();
+                                            }
+                                        });
                                         Log.d(TAG, "会议和当前用户参会绑定失败"+e.getMessage());
                                     }
                                 }
@@ -216,6 +230,18 @@ public class EditMeetingActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+     * 展示进度条
+     */
+    public  void showProgress(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("正在获取服务器数据");
+        progressDialog.setMessage("请稍后...");
+        progressDialog.setCancelable(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
     }
 
     /**
