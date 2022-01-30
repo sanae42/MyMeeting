@@ -172,9 +172,11 @@ public class EditMeetingActivity extends AppCompatActivity {
 
         meeting.setOriginator(BmobUser.getCurrentUser(_User.class));
 
-        _User user = BmobUser.getCurrentUser(_User.class);
+        //新建会议state为“normal”
+        meeting.setState("normal");
+
         BmobRelation relation = new BmobRelation();
-        relation.add(user);
+        relation.add(BmobUser.getCurrentUser(_User.class));
         meeting.setParticipant(relation);
 
         //展示进度条

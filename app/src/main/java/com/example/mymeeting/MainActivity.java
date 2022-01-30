@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                                 m.setStateNumber(0);
                                 m.setIntroduction(meeting.getIntroduction());
                                 m.setComtent(meeting.getComtent());
-                                m.setImageId(R.drawable.pear); //
+                                m.setImageId(R.drawable.flower); //
                                 m.setOrganizer(meeting.getOrganizer());
 
 
