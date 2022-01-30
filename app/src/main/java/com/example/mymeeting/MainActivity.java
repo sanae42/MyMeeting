@@ -241,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
                 String userObjectId = BmobUser.getCurrentUser(_User.class).getObjectId();
                 Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
                 BmobQuery<Meeting> bmobQuery = new BmobQuery<>();
+                //增加了对会议状态的搜索条件
+                bmobQuery.addWhereEqualTo("state", "normal");
                 bmobQuery.findObjects(new FindListener<Meeting>() {
                     @Override
                     public void done(List<Meeting> list, BmobException e) {

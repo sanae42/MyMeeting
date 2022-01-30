@@ -3,6 +3,7 @@ package com.example.mymeeting;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -69,13 +70,14 @@ public class MeetingActivity extends AppCompatActivity {
         if(meeting.getIfParticipant()==true)fruitContent="++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
         fruitContentText.setText(fruitContent);
 
+        //悬浮按钮，根据参会状态不同设置不同样式
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
         if(meeting.getIfParticipant()==false){
             fab.setImageResource(R.drawable.attend);
         }else if(meeting.getIfParticipant()==true){
             fab.setImageResource(R.drawable.leave);
         }
-        //TODO：设置通过点按fab参加和退出会议，修改bomb成功后退出到主活动并刷新
+        //悬浮按钮监听，根据参会状态不同设置点按参会/退会
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,10 +86,24 @@ public class MeetingActivity extends AppCompatActivity {
                     attendMeeting();
                 }else if(meeting.getIfParticipant()==true){
                     //参会的时候，申请取消参会
-                    exitMeeting();
+                    if(meeting.getIfOriginator()==false){
+                        exitMeeting();
+                    }else if(meeting.getIfOriginator()==true){
+                        //会议建立者不可以退出会议
+                        Toast.makeText(getContext(), "您是会议建立者，不可以退出会议", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
+
+        //会议设置CardView，根据会议建立者状态不同设置显示和隐藏
+        CardView meetingEditCardView = (CardView)findViewById(R.id.meeting_edit_cardview);
+        if(meeting.getIfOriginator()==false){
+            meetingEditCardView.setVisibility(View.GONE);
+        }else if(meeting.getIfOriginator()==true){
+            meetingEditCardView.setVisibility(View.VISIBLE);
+        }
+
 
     }
 

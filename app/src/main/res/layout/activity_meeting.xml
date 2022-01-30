@@ -61,6 +61,61 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp" />
             </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/meeting_edit_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="0dp"
+                app:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="会议编辑"
+                        android:drawableLeft="@drawable/ic_baseline_library_books_24"
+                        android:fontFamily="sans-serif-black"
+                        android:textSize="24dp"/>
+
+
+
+                    <EditText
+                        android:id="@+id/nameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="请输入会议名"
+                        android:inputType="text"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/introductionEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="请输入会议简介"
+                        android:minLines="1"
+                        >
+                    </com.google.android.material.textfield.TextInputEditText>
+                    <org.angmarch.views.NiceSpinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:textSize="16dp"
+                        android:text="会议类型"
+                        android:id="@+id/typeSpinner" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
