@@ -553,6 +553,13 @@ public class MainActivity extends AppCompatActivity {
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                 }
                 break;
+            case 3:
+                if(resultCode==RESULT_OK){
+                    //加入/退出会议成功，因为在adapter里强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
+                    getAttendingMeetingFromBomb();
+                    Log.d(TAG, "测试返回3");
+                }
+                break;
 
         default:
         }

@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity android:name=".EditMeetingActivity"></activity>
+        <activity android:name=".allParticipants.AllParticipantsActivity"></activity>
+        <activity android:name=".EditMeetingActivity" />
         <activity android:name=".LoginActivity" /> <!-- 配置ContentProvider -->
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"

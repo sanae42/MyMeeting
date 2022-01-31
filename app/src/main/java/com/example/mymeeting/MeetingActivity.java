@@ -12,10 +12,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -97,13 +99,32 @@ public class MeetingActivity extends AppCompatActivity {
         });
 
         //会议设置CardView，根据会议建立者状态不同设置显示和隐藏
-        CardView meetingEditCardView = (CardView)findViewById(R.id.meeting_edit_cardview);
+        View meetingEditCardView = (View) findViewById(R.id.meeting_edit_cardview);
         if(meeting.getIfOriginator()==false){
             meetingEditCardView.setVisibility(View.GONE);
         }else if(meeting.getIfOriginator()==true){
             meetingEditCardView.setVisibility(View.VISIBLE);
         }
 
+        //会议功能CardView，根据会议参加者状态不同设置显示和隐藏
+        View meetingFunctionCardView = (View) findViewById(R.id.meeting_function_cardview);
+        if(meeting.getIfParticipant()==false){
+            meetingEditCardView.setVisibility(View.GONE);
+        }else if(meeting.getIfParticipant()==true){
+            meetingEditCardView.setVisibility(View.VISIBLE);
+        }
+
+        //会议功能之———全部参会者
+        LinearLayout allParticipants = (LinearLayout)findViewById(R.id.all_participants);
+        allParticipants.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), AllParticipantsActivity.class);
+                intent.putExtra("meeting",meeting);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -154,11 +175,11 @@ public class MeetingActivity extends AppCompatActivity {
                                                     @Override
                                                     public void run() {
                                                         Log.d(TAG, "参会成功");
-                                                        Toast.makeText(getContext(), "参会成功，请手动刷新会议列表", Toast.LENGTH_SHORT).show();
-                                                        //TODO：因为是adapter发起的跳转，所以不能用startActivityForResult，自然也不能返回结果让fragment刷新列表了
+                                                        Toast.makeText(getContext(), "参会成功", Toast.LENGTH_SHORT).show();
                                                         //返回主活动，刷新两个列表
-//                                                        Intent intent = new Intent();
-//                                                        setResult(RESULT_OK,intent);
+                                                        //加入/退出会议成功，因为在adapter里强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
+                                                        Intent intent = new Intent();
+                                                        setResult(RESULT_OK,intent);
                                                         finish();
                                                     }
                                                 });
@@ -244,11 +265,11 @@ public class MeetingActivity extends AppCompatActivity {
                                                     @Override
                                                     public void run() {
                                                         Log.d(TAG, "退出成功");
-                                                        Toast.makeText(getContext(), "退会成功，请手动刷新会议列表", Toast.LENGTH_SHORT).show();
-                                                        //TODO：因为是adapter发起的跳转，所以不能用startActivityForResult，自然也不能返回结果让fragment刷新列表了
+                                                        Toast.makeText(getContext(), "退会成功", Toast.LENGTH_SHORT).show();
                                                         //返回主活动，刷新两个列表
-//                                                        Intent intent = new Intent();
-//                                                        setResult(RESULT_OK,intent);
+                                                        //加入/退出会议成功，因为在adapter里强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
+                                                        Intent intent = new Intent();
+                                                        setResult(RESULT_OK,intent);
                                                         finish();
                                                     }
                                                 });

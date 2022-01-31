@@ -23,34 +23,35 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/meeting_name"
+                android:id="@+id/objectId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="用户objectId"
                 android:layout_gravity="center_horizontal"
                 android:gravity="left"
                 android:textColor="@color/black"
                 android:layout_margin="5dp"
                 android:textSize="18sp" />
             <TextView
-                android:id="@+id/meeting_date"
-                android:text="2022年1月25日"
+                android:id="@+id/name"
+                android:text="用户名字"
                 android:drawableLeft="@drawable/ic_baseline_today_24"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="left"
                 android:layout_margin="5dp"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
             <TextView
-                android:id="@+id/meeting_location"
-                android:text="sy101"
+                android:id="@+id/nick"
+                android:text="用户昵称"
                 android:drawableLeft="@drawable/ic_baseline_location_on_24"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="left"
                 android:layout_margin="5dp"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>
