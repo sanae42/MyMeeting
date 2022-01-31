@@ -1,11 +1,13 @@
 package com.example.mymeeting;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -45,6 +47,12 @@ public class EditMeetingActivity extends AppCompatActivity {
 
     private static final String TAG = "EditMeetingActivity";
 
+    //操作类型：new：新建  edit：编辑
+    private String editType;
+
+    //要编辑的会议
+    private meetingItem meetingToEdit;
+
     EditText nameEditText;
     TextInputEditText introductionEditText;
     NiceSpinner typeSpinner;
@@ -63,22 +71,43 @@ public class EditMeetingActivity extends AppCompatActivity {
     //加载进度条
     ProgressDialog progressDialog;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_meeting);
 
+        initiateView();
+
+        //根据操作类型设置显示填写内容
         Intent intent = getIntent();
-        if(intent.getStringExtra("type").equals("new")){
+        editType = intent.getStringExtra("type");
+        if(editType.equals("new")){
 
         }
-        else if(intent.getStringExtra("type").equals("edit")){
+        else if(editType.equals("edit")){
+            meetingToEdit = (meetingItem)intent.getSerializableExtra("meeting");
+
+            nameEditText.setText(meetingToEdit.getName());
+            introductionEditText.setText(meetingToEdit.getIntroduction());
+            typeSpinner.setSelectedIndex(0);   //后续再用内联函数之类的方式实现，懒得写了，就选0了
+
+            organizerEditText.setText(meetingToEdit.getOrganizer());
+            contentEditText.setText(meetingToEdit.getComtent());
+            locationSpinner.setSelectedIndex(0);   //后续再用内联函数之类的方式实现，懒得写了，就选0了
+
+            lengthEditText.setText(meetingToEdit.getLength());
+            hostTimeCalendar.scrollToCalendar(meetingToEdit.getHostDate().getYear(),meetingToEdit.getHostDate().getMonth(),meetingToEdit.getHostDate().getDay());
+            hostTimePicker.setMinute(meetingToEdit.getHostDate().getMinutes());
+            hostTimePicker.setHour(meetingToEdit.getHostDate().getHours());
 
         }
 //        meetingItem defaultMeetingItem = new meetingItem();
 //        meeting = (meetingItem)intent.getSerializableExtra("meeting_item");
 
-        initiateView();
+
+
+
     }
 
     /**
@@ -172,65 +201,104 @@ public class EditMeetingActivity extends AppCompatActivity {
 
         meeting.setOriginator(BmobUser.getCurrentUser(_User.class));
 
-        //新建会议state为“normal”
-        meeting.setState("normal");
+        //根据操作类型分情况
+        if(editType.equals("new")){
+            //新建会议state为“normal”
+            meeting.setState("normal");
 
-        BmobRelation relation = new BmobRelation();
-        relation.add(BmobUser.getCurrentUser(_User.class));
-        meeting.setParticipant(relation);
+            BmobRelation relation = new BmobRelation();
+            relation.add(BmobUser.getCurrentUser(_User.class));
+            meeting.setParticipant(relation);
+        }
+        else if(editType.equals("edit")){}
+
 
         //展示进度条
         showProgress();
 
-        meeting.save(new SaveListener<String>() {
-            @Override
-            public void done(String objectId, BmobException e) {
-                //TODO: ****_User表中有attendingMeeting的版本
-                if(e==null){
-                    Log.d(TAG, "创建会议成功，返回objectId为："+objectId);
-                    Toast.makeText(getContext(), "创建会议成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
+        if(editType.equals("new")){
+            meeting.save(new SaveListener<String>() {
+                @Override
+                public void done(String objectId, BmobException e) {
+                    //TODO: ****_User表中有attendingMeeting的版本
+                    if(e==null){
+                        Log.d(TAG, "创建会议成功，返回objectId为："+objectId);
+                        Toast.makeText(getContext(), "创建会议成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BmobRelation relation = new BmobRelation();
-                            Meeting m = new Meeting();
-                            m.setObjectId(objectId);
-                            relation.add(m);
-                            _User u = new _User();
-                            u.setObjectId(BmobUser.getCurrentUser().getObjectId());
-                            u.setAttendingMeeting(relation);
-                            u.update(new UpdateListener() {
-                                @Override
-                                public void done(BmobException e) {
-                                    if(e==null){
-                                        Log.d(TAG, "会议和当前用户参会绑定成功");
-                                        //返回主活动，刷新两个列表
-                                        Intent intent = new Intent();
-                                        setResult(RESULT_OK,intent);
-                                        finish();
-                                    }else{
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //取消展示进度条
-                                                progressDialog.dismiss();
-                                            }
-                                        });
-                                        Log.d(TAG, "会议和当前用户参会绑定失败"+e.getMessage());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                BmobRelation relation = new BmobRelation();
+                                Meeting m = new Meeting();
+                                m.setObjectId(objectId);
+                                relation.add(m);
+                                _User u = new _User();
+                                u.setObjectId(BmobUser.getCurrentUser().getObjectId());
+                                u.setAttendingMeeting(relation);
+                                u.update(new UpdateListener() {
+                                    @Override
+                                    public void done(BmobException e) {
+                                        if(e==null){
+                                            Log.d(TAG, "会议和当前用户参会绑定成功");
+                                            //返回主活动，刷新两个列表
+                                            Intent intent = new Intent();
+                                            setResult(RESULT_OK,intent);
+                                            finish();
+                                        }else{
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    //取消展示进度条
+                                                    progressDialog.dismiss();
+                                                }
+                                            });
+                                            Log.d(TAG, "会议和当前用户参会绑定失败"+e.getMessage());
+                                        }
                                     }
-                                }
-                            });
+                                });
 
-                        }
-                    });
+                            }
+                        });
 
-                }else{
-                    Log.d(TAG, "创建会议失败：" + e.getMessage());
-                    Toast.makeText(getContext(), "创建会议失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }else{
+                        Log.d(TAG, "创建会议失败：" + e.getMessage());
+                        Toast.makeText(getContext(), "创建会议失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
+        }
+        else if(editType.equals("edit")){
+            meeting.update(meetingToEdit.getObjectId(), new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e == null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "创建编辑成功");
+                                Toast.makeText(getContext(), "创建编辑成功", Toast.LENGTH_SHORT).show();
+                                //TODO : 这里应该提醒主活动list刷新，但因为不是主活动跳转的活动，没法用监听活动返回来实现; 但可以先返回MeetingActivity，在监听，再返回主活动，间接实现
+                                //返回主活动，刷新两个列表
+                                Intent intent = new Intent();
+                                setResult(RESULT_OK,intent);
+                                finish();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "创建编辑失败");
+                                Toast.makeText(getContext(), "创建编辑失败", Toast.LENGTH_SHORT).show();
+                                //取消展示进度条
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
 
     }
 

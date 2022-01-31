@@ -67,6 +67,7 @@ public class MeetingListAdapter extends RecyclerView.Adapter<MeetingListAdapter.
                 //传递序列化的meetingItem到MeetingActivity
                 intent.putExtra("meeting_item",meetingItem);
                 //强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
+                //同时，在MeetingActivity监听编辑活动成功后也会再返回到主活动
                 ((MainActivity) mContext).startActivityForResult(intent, 3);
 //                mContext.startActivity(intent);
             }

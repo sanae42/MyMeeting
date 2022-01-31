@@ -1,11 +1,14 @@
 package com.example.mymeeting;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +36,7 @@ import static org.litepal.LitePalApplication.getContext;
 
 public class MeetingActivity extends AppCompatActivity {
 
-    //TODO:传参可以用传递class
+    //主活动通过adapter传递的meetingItem
     meetingItem meeting;
 
     //加载进度条
@@ -126,6 +129,98 @@ public class MeetingActivity extends AppCompatActivity {
             }
         });
 
+        //会议功能之———编辑会议
+        LinearLayout editThisMeeting = (LinearLayout)findViewById(R.id.edit_this_meeting);
+        editThisMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), EditMeetingActivity.class);
+                intent.putExtra("type","edit");
+                intent.putExtra("meeting",meeting);
+                //监听返回
+                startActivityForResult(intent,1);
+            }
+        });
+
+        //会议功能之———删除会议
+        LinearLayout deleteThisMeeting = (LinearLayout)findViewById(R.id.delete_this_meeting);
+        deleteThisMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteMeeting();
+            }
+        });
+
+    }
+
+    /**
+     * 删除会议
+     */
+    private void deleteMeeting(){
+        new AlertDialog.Builder(this)
+                .setTitle("删除会议")//设置标题
+                .setMessage("是否删除这个会议?")//提示消息
+                .setIcon(R.mipmap.ic_launcher)//设置图标
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    //点击确定按钮执行的事件
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //展示进度条
+                        showProgress();
+                        Bmob.initialize(getContext(),appkey);
+                        Meeting m = new Meeting();
+                        //通过设置state字段实现删除，实际上会议仍然保留在线上数据库
+                        m.setState("delete");
+                        m.update(meeting.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if (e == null) {
+                                    Log.d(TAG, "删除会议成功");
+                                    Toast.makeText(getContext(), "删除会议成功", Toast.LENGTH_SHORT).show();
+                                    //回到主活动刷新列表
+                                    Intent intent = new Intent();
+                                    setResult(RESULT_OK,intent);
+                                    finish();
+                                } else {
+                                    //取消展示进度条
+                                    progressDialog.dismiss();
+                                    Log.d(TAG, "删除会议失败"+e.getMessage());
+                                    Toast.makeText(getContext(), "删除会议失败"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    //点击取消按钮执行的事件
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create()//创建对话框
+                .show();//显示对话框
+
+    }
+
+    /**
+     * 接收活动返回结果
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+                //监听到编辑活动返回的结果，编辑现有会议成功，再返回主活动，让主活动刷新list，相当于间接实现了在EditMeetingActivity编辑会议成功刷新主活动list
+                if(resultCode==RESULT_OK){
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }
+                break;
+            default:
+        }
     }
 
     //TODO：参会和退会这里，两个表添加relation的顺序要好好研究一下，防止一个表加上了一个表没加上的情况造成的不良影响，或者说如果真的出现这种情况，后面再回退或者重新申请？

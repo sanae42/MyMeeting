@@ -43,6 +43,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/edit_this_meeting"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -64,6 +65,7 @@
                         </TextView>
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/delete_this_meeting"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

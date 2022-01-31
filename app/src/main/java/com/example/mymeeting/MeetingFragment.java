@@ -160,6 +160,13 @@ public class MeetingFragment extends Fragment {
         swipeRefresh.setRefreshing(false);
     }
 
+    public void showSwipeRefresh(){
+        swipeRefresh.setRefreshing(true);
+    }
+
+    public void cancelSwipeRefresh(){
+        swipeRefresh.setRefreshing(false);
+    }
 
     //    TODO：refresh刷新TextView
     public void refresh(String s)

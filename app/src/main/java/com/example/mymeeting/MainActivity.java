@@ -126,6 +126,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //侧边栏按键点击
             public boolean onNavigationItemSelected(MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.nav_call:
+                        Log.d(TAG, "onNavigationItemSelected: nav_call");
+                        break;
+                    case R.id.nav_friends:
+                        Log.d(TAG, "onNavigationItemSelected: nav_friends");
+                        break;
+                    default:
+                        break;
+                }
+
         //     点击NavigationView中选项关闭侧边栏
                 mDrawerLayout.closeDrawers();
                 return true;
@@ -207,6 +219,12 @@ public class MainActivity extends AppCompatActivity {
             //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
             return;
         }
+
+        //展示下拉刷新条 会有“on a null object reference”问题
+        //因为在应用启动第一次刚开始加载数据时，fragment可能还没加载完成，所以在onActivityResult里添加后面两行
+//        ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
+//        ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
+
         BmobQuery<Meeting> query = new BmobQuery<Meeting>();
         query.addWhereRelatedTo("attendingMeeting", new BmobPointer(BmobUser.getCurrentUser()));
         query.findObjects(new FindListener<Meeting>() {
@@ -539,6 +557,8 @@ public class MainActivity extends AppCompatActivity {
                         unloggedLayout.setVisibility(View.GONE);
                     }
                     //TODO: ****_User表中有attendingMeeting的版本
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
                     getAttendingMeetingFromBomb();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
@@ -546,18 +566,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 2:
                 if(resultCode==RESULT_OK){
-                    //新增/编辑会议成功，刷新侧边栏头部，并且刷新两个fragment获取数据
+                    //新增会议成功，刷新侧边栏头部，并且刷新两个fragment获取数据
                     //TODO: ****_User表中有attendingMeeting的版本
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
                     getAttendingMeetingFromBomb();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).getDataFromLitePal();
 //                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).getDataFromLitePal();
                 }
                 break;
+            //case 3 的startActivityForResult在MeetingListAdapter里
             case 3:
                 if(resultCode==RESULT_OK){
                     //加入/退出会议成功，因为在adapter里强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
+                    //MeetingActivity里删除会议后的返回刷新，和编辑会议活动编辑会议成功后返回MeetingActivity再返回主活动的监听刷新都是这里
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
+                    ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
                     getAttendingMeetingFromBomb();
-                    Log.d(TAG, "测试返回3");
                 }
                 break;
 
