@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.bomb.doBomb;
+import com.example.mymeeting.calendar.CalendarActivity;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
 import com.example.mymeeting.sp.UserStatus;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -121,15 +122,17 @@ public class MainActivity extends AppCompatActivity {
         //  设置NavigationView布局
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         //   将NavigationView中的call作为默认选项选中
-        navView.setCheckedItem(R.id.nav_call);
+//        navView.setCheckedItem(R.id.nav_call);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             //侧边栏按键点击
             public boolean onNavigationItemSelected(MenuItem item) {
 
                 switch (item.getItemId()){
-                    case R.id.nav_call:
-                        Log.d(TAG, "onNavigationItemSelected: nav_call");
+                    case R.id.nav_calendar:
+                        Intent intent = new Intent();
+                        intent.setClass(getApplicationContext(), CalendarActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.nav_friends:
                         Log.d(TAG, "onNavigationItemSelected: nav_friends");

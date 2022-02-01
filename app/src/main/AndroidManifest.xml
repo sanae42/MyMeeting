@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity android:name=".allParticipants.AllParticipantsActivity"></activity>
+        <activity android:name=".calendar.CalendarActivity"></activity>
+        <activity android:name=".allParticipants.AllParticipantsActivity" />
         <activity android:name=".EditMeetingActivity" />
         <activity android:name=".LoginActivity" /> <!-- 配置ContentProvider -->
         <provider
