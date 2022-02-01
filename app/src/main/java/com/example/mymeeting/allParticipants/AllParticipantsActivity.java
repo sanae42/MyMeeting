@@ -1,6 +1,7 @@
 package com.example.mymeeting.allParticipants;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -8,8 +9,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.example.mymeeting.MainActivity;
+import com.example.mymeeting.MeetingFragment;
 import com.example.mymeeting.MeetingListAdapter;
 import com.example.mymeeting.R;
 import com.example.mymeeting.bomb.Meeting;
@@ -42,6 +45,8 @@ public class AllParticipantsActivity extends AppCompatActivity {
     //recyclerview适配器
     private AllParticipantsListAdapter adapter;
 
+    SearchView searchView;
+
     //    下拉刷新
     private SwipeRefreshLayout swipeRefresh;
 
@@ -72,6 +77,26 @@ public class AllParticipantsActivity extends AppCompatActivity {
             }
         });
 
+        searchView = findViewById(R.id.search);
+        //默认就是搜索框展开
+        searchView.setIconified(true);
+        //一直都是搜索框，搜索图标在输入框左侧（默认是内嵌的）
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            //文字输入完成，提交的回调
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return true;
+            }
+
+            //输入文字发生改变
+            @Override
+            public boolean onQueryTextChange(String s) {
+                search(s);
+                return true;
+            }
+        });
+
         getAllParticipantsFromBomb();
 
 
@@ -91,6 +116,7 @@ public class AllParticipantsActivity extends AppCompatActivity {
             public void done(List<_User> list, BmobException e) {
                 if(e==null) {
                     Log.d(TAG, "获取全部参会者数据成功，list长度：" + list.size());
+                    allParticipantsList.clear();
                     for (_User u:list){
                         allParticipantsList.add(u);
                         backupList.add(u);
@@ -114,5 +140,15 @@ public class AllParticipantsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void search(String s)
+    {
+        allParticipantsList.clear();
+        for(_User u: backupList){
+            if(u.getObjectId().indexOf(s)!=-1 || u.getUsername().indexOf(s)!=-1 || u.getNick()!=null && u.getNick().indexOf(s)!=-1)
+                allParticipantsList.add(u);
+        }
+        adapter.notifyDataSetChanged();
     }
 }

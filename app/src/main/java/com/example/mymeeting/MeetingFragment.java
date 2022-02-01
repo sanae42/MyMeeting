@@ -168,7 +168,7 @@ public class MeetingFragment extends Fragment {
         swipeRefresh.setRefreshing(false);
     }
 
-    //    TODO：refresh刷新TextView
+    //  refresh刷新TextView
     public void refresh(String s)
     {
         meetingItemList.clear();
