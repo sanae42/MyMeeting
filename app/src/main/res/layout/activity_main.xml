@@ -68,9 +68,7 @@
                 android:background="?attr/colorPrimary"
                 app:tabSelectedTextColor="@color/white"
                 app:tabTextColor="@color/purple_200"
-
                 app:tabIndicatorColor="@color/white"
-
                 />
 
             <androidx.viewpager.widget.ViewPager
