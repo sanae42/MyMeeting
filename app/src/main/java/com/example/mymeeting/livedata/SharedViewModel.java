@@ -1,8 +1,11 @@
-package com.example.mymeeting;
+package com.example.mymeeting.livedata;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+//        TODO：******************************************
+//        TODO：*************这个类目前已不使用*************
+//        TODO：******************************************
 public class SharedViewModel extends ViewModel {
     private final MutableLiveData<Boolean> log = new MutableLiveData<Boolean>();
     private final MutableLiveData<Integer> needRefreshData = new MutableLiveData<Integer>();

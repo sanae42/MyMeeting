@@ -5,7 +5,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -20,9 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
+import com.example.mymeeting.db.meetingItem;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -34,7 +35,7 @@ import cn.bmob.v3.listener.UpdateListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
-public class MeetingActivity extends AppCompatActivity {
+public class MeetingActivity extends BaseActivity {
 
     //主活动通过adapter传递的meetingItem
     meetingItem meeting;

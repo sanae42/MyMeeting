@@ -1,4 +1,4 @@
-package com.example.mymeeting;
+package com.example.mymeeting.login;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mymeeting.R;
+import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb._User;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -26,7 +28,7 @@ import cn.bmob.v3.listener.SaveListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     // 登录注册界面控件
     EditText Username;

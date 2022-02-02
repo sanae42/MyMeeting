@@ -8,7 +8,7 @@
 
     <list>
 <!--        <mapping class="com.example.mymeeting.db.MeetingData" />-->
-        <mapping class="com.example.mymeeting.meetingItem" />
+        <mapping class="com.example.mymeeting.db.meetingItem" />
 
     </list>
 

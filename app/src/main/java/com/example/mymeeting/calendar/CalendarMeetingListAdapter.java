@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mymeeting.MainActivity;
 import com.example.mymeeting.MeetingActivity;
-import com.example.mymeeting.MeetingListAdapter;
 import com.example.mymeeting.R;
-import com.example.mymeeting.bomb._User;
-import com.example.mymeeting.meetingItem;
+import com.example.mymeeting.db.meetingItem;
 
 import java.util.List;
 

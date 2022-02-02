@@ -27,6 +27,9 @@ import cn.bmob.v3.listener.SaveListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
+//        TODO：******************************************
+//        TODO：*************这个类目前已不使用*************
+//        TODO：******************************************
 public class doBomb {
 
     private String appkey = "de0d0d10141439f301fc9d139da66920";
@@ -57,7 +60,7 @@ public class doBomb {
             }
         });
 
-        //TODO:添加本地数据库新会议，可以采取仅添加此会议或重新拉取服务器会议数据，应等待确认服务器添加会议成功后再添加本地新建会议
+        //添加本地数据库新会议，可以采取仅添加此会议或重新拉取服务器会议数据，应等待确认服务器添加会议成功后再添加本地新建会议
 
         return result[0];
     }
@@ -134,7 +137,7 @@ public class doBomb {
         relation.add(user);
         meeting.setParticipant(relation);
 
-        //TODO:buxing,需要单独传id viewModel也得需要context
+        //buxing,需要单独传id viewModel也得需要context
 //        UserStatus userStatus = new UserStatus(context);
 
         Boolean bool = this.addMeeting(meeting);

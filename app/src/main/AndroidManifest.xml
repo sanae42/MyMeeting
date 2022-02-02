@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mymeeting">
+
     <!-- 允许联网 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 获取GSM（2g）、WCDMA（联通3g）等网络状态的信息 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 获取wifi网络状态的信息 -->
@@ -8,6 +9,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 获取sd卡写的权限，用于文件上传和下载 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 允许读取手机状态 用于创建BmobInstallation -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+<!--    广播权限-->
+    <uses-permission android:name="com.example.mymeeting.REFRESH_DATA" />
+    <permission android:name="com.example.mymeeting.REFRESH_DATA" android:protectionLevel="signature"></permission>
 
     <application
         android:name="org.litepal.LitePalApplication"
@@ -17,10 +22,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity android:name=".calendar.CalendarActivity"></activity>
+
+<!--        自定义广播接收器 目前已不采用-->
+        <receiver
+            android:name=".broadcast.MyReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.mymeeting.REFRESH_DATA" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".calendar.CalendarActivity" />
         <activity android:name=".allParticipants.AllParticipantsActivity" />
         <activity android:name=".EditMeetingActivity" />
-        <activity android:name=".LoginActivity" /> <!-- 配置ContentProvider -->
+        <activity android:name=".login.LoginActivity" /> <!-- 配置ContentProvider -->
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
             android:authorities="com.example.mymeeting.BmobContentProvider" />

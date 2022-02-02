@@ -12,14 +12,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.mymeeting.activityCollector.ActivityCollector;
+import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
+import com.example.mymeeting.db.meetingItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -41,7 +42,7 @@ import cn.bmob.v3.listener.UpdateListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
-public class EditMeetingActivity extends AppCompatActivity {
+public class EditMeetingActivity extends BaseActivity {
 
     private String appkey = "de0d0d10141439f301fc9d139da66920";
 
@@ -277,11 +278,21 @@ public class EditMeetingActivity extends AppCompatActivity {
                             public void run() {
                                 Log.d(TAG, "创建编辑成功");
                                 Toast.makeText(getContext(), "创建编辑成功", Toast.LENGTH_SHORT).show();
-                                //TODO : 这里应该提醒主活动list刷新，但因为不是主活动跳转的活动，没法用监听活动返回来实现; 但可以先返回MeetingActivity，在监听，再返回主活动，间接实现
+                                //TODO : (已过时)这里应该提醒主活动list刷新，但因为不是主活动跳转的活动，没法用监听活动返回来实现; 但可以先返回MeetingActivity，在监听，再返回主活动，间接实现
                                 //返回主活动，刷新两个列表
-                                Intent intent = new Intent();
-                                setResult(RESULT_OK,intent);
-                                finish();
+//                                Intent intent = new Intent();
+//                                setResult(RESULT_OK,intent);
+                                //TODO : 这里采用广播通知主活动刷新，活动管理器退出到主活动
+                                Intent intent_broadcast = new Intent("com.example.mymeeting.REFRESH_DATA");
+                                sendBroadcast(intent_broadcast, "com.example.mymeeting.REFRESH_DATA");
+                                ActivityCollector.backToMainActivity();
+
+//                                // 自定义广播测试  失败
+//                                Intent intent_broadcast = new Intent("com.example.mymeeting.refreshData1");
+////                                intent_broadcast.setComponent(new ComponentName("com.example.mymeeting","com.example.mymeeting.broadcast.MyReceiver"));
+//                                sendBroadcast(intent_broadcast);
+
+//                                finish();
                             }
                         });
                     } else {

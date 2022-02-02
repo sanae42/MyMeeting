@@ -66,13 +66,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/purple_200"
+
+                app:tabIndicatorColor="@color/white"
+
                 />
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/tabs" >
+                android:layout_below="@id/tabs">
 
             </androidx.viewpager.widget.ViewPager>
         </RelativeLayout>

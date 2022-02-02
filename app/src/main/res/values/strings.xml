@@ -2,6 +2,6 @@
     <string name="app_name">MyMeeting</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="tab_text_1">页面1</string>
-    <string name="tab_text_2">页面2</string>
+    <string name="tab_text_1">全部会议</string>
+    <string name="tab_text_2">我的会议</string>
 </resources>

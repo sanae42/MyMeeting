@@ -7,16 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mymeeting.R;
-import com.example.mymeeting.allParticipants.AllParticipantsListAdapter;
-import com.example.mymeeting.bomb._User;
-import com.example.mymeeting.meetingItem;
+import com.example.mymeeting.activityCollector.BaseActivity;
+import com.example.mymeeting.db.meetingItem;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
@@ -25,7 +22,7 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends BaseActivity {
 
     CalendarView calendar;
 

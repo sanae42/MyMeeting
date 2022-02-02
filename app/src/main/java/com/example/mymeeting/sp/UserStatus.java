@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+//        TODO：******************************************
+//        TODO：*************这个类目前已不使用*************
+//        TODO：******************************************
 public class UserStatus {
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;

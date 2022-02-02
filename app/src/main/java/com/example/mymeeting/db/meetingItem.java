@@ -1,4 +1,4 @@
-package com.example.mymeeting;
+package com.example.mymeeting.db;
 
 import com.example.mymeeting.bomb._User;
 

@@ -7,39 +7,38 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
-import com.example.mymeeting.bomb.doBomb;
 import com.example.mymeeting.calendar.CalendarActivity;
+import com.example.mymeeting.db.meetingItem;
+import com.example.mymeeting.login.LoginActivity;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
-import com.example.mymeeting.sp.UserStatus;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import org.litepal.crud.DataSupport;
-import org.litepal.exceptions.DataSupportException;
 import org.litepal.tablemanager.Connector;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,12 +49,10 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.SaveListener;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static org.litepal.LitePalApplication.getContext;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     final String TAG = "MainActivity";
 
@@ -73,10 +70,34 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout loggedLayout;
     RelativeLayout unloggedLayout;
 
+    //广播
+    IntentFilter intentFilter;
+    Receiver receiver;
+
     String appkey = "de0d0d10141439f301fc9d139da66920";
 
     //TODO: ****_User表中有attendingMeeting的版本
     private List<Meeting> attendingMeetingList = new ArrayList<>();
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //广播测试成功
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.mymeeting.REFRESH_DATA");
+        receiver = new Receiver();
+        registerReceiver(receiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(receiver != null){
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,19 +108,30 @@ public class MainActivity extends AppCompatActivity {
         initiateView();
         Connector.getDatabase(); //执行任何一次数据库操作，初始化数据库
 
-        //TODO: 测试阶段默认自动登录
-        //TODO: BombUser自带自动登录功能
-//        UserStatus userStatus = new UserStatus(getContext());
-//        if(true){
-//            userStatus.login(1002,"18301038","111111",true);
-//        }
-
-        //TODO: ****_User表中有attendingMeeting的版本
+        //从服务器获取数据，_User表中有attendingMeeting的版本
         getAttendingMeetingFromBomb();
 
-        Log.d(TAG, "pear："+R.drawable.pear);
+        //TODO:按书上在onPause和onResume写了绑定/解除绑定广播接收器，但在onResume写的好像不可以，必须在onCreate里再写一遍（如下
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.mymeeting.REFRESH_DATA");
+        receiver = new Receiver();
+        registerReceiver(receiver, intentFilter);
 
     }
+
+    /**
+     * 自定义的广播接收器class
+     */
+    class Receiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
+            ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
+            getAttendingMeetingFromBomb();
+            Toast.makeText(getContext(), "测试接收广播成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     /**
      * 初始化控件
@@ -121,8 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
         //  设置NavigationView布局
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        //   将NavigationView中的call作为默认选项选中
-//        navView.setCheckedItem(R.id.nav_call);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             //侧边栏按键点击
@@ -148,33 +178,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //  根据用户是否登录改变侧边栏headerLayout样式
-        //TODO:登录相关
         Bmob.initialize(getContext(),appkey);
         View headview=navView.inflateHeaderView(R.layout.nav_header);
         loggedLayout = (RelativeLayout)headview.findViewById(R.id.loggedLayout);
         unloggedLayout = (RelativeLayout)headview.findViewById(R.id.unloggedLayout);
-        Button logoutButton = (Button) headview.findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BmobUser.logOut();
-                loggedLayout.setVisibility(View.GONE);
-                unloggedLayout.setVisibility(View.VISIBLE);
-            }
-        });
-        Button loginButton = (Button) headview.findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), LoginActivity.class);
-//                Bundle bundle=new Bundle();
-//                bundle.putString("type", "new");
-//                intent.putExtras(bundle);
-                //TODO:收到结果时决定是否刷新布局为登录状态
-                startActivityForResult(intent,1);
-            }
-        });
         if (BmobUser.isLogin()) {
             loggedLayout.setVisibility(View.VISIBLE);
             unloggedLayout.setVisibility(View.GONE);
@@ -184,6 +191,28 @@ public class MainActivity extends AppCompatActivity {
             loggedLayout.setVisibility(View.GONE);
             unloggedLayout.setVisibility(View.VISIBLE);
         }
+        //注销按钮
+        Button logoutButton = (Button) headview.findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BmobUser.logOut();
+                loggedLayout.setVisibility(View.GONE);
+                unloggedLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        //登录按钮
+        Button loginButton = (Button) headview.findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), LoginActivity.class);
+                //跳转loginActivity，监听收到结果时决定是否刷新布局为登录状态
+                startActivityForResult(intent,1);
+            }
+        });
+
 
 
         //        悬浮按钮
@@ -200,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                                 //设置活动跳转传值为：新建活动
                                 intent.putExtra("type","new");
                                 startActivityForResult(intent,2);
-//                            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+                                //重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
                             }
                         })
                         .show();
@@ -217,9 +246,12 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
     }
 
+    /**
+     * （_User表中有attendingMeeting的获取会议数据函数）从服务器获取当前用户的attendingMeetingList，再调用getDataFromBombVersion2得到会议信息
+     */
     public void getAttendingMeetingFromBomb(){
         if(BmobUser.isLogin()==false){
-            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+            //重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
             return;
         }
 
@@ -250,7 +282,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //TODO: ****_User表中有attendingMeeting的版本
+    /**
+     * （_User表中有attendingMeeting的获取会议数据函数，被其他函数调用）从服务器获取会议信息，由getAttendingMeetingFromBomb调用
+     */
     public void getDataFromBombVersion2(){
         if(BmobUser.isLogin()==false){
             //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
@@ -346,7 +380,9 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-
+    /**
+     * （_User表中有attendingMeeting的获取会议数据函数，不再采用）从服务器获取会议信息，
+     */
     public void getDataFromBombVersion1(){
         if(BmobUser.isLogin()==false){
             //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
@@ -474,7 +510,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * 菜单按键监听，此处菜单即toolbar上一系列按键
      */
@@ -583,6 +618,8 @@ public class MainActivity extends AppCompatActivity {
                 if(resultCode==RESULT_OK){
                     //加入/退出会议成功，因为在adapter里强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
                     //MeetingActivity里删除会议后的返回刷新，和编辑会议活动编辑会议成功后返回MeetingActivity再返回主活动的监听刷新都是这里
+                    //TODO: 自定义广播实验成功，广播可以替代此处部分功能（当前局部采用广播）
+                    //TODO : EditMeetingActivity已采用广播形式提醒主活动刷新，不再采用间接跳转监听；其他地方也可以使用广播
                     ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
                     ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
                     getAttendingMeetingFromBomb();

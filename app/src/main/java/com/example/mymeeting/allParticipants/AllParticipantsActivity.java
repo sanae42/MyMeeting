@@ -9,15 +9,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import com.example.mymeeting.MainActivity;
-import com.example.mymeeting.MeetingFragment;
-import com.example.mymeeting.MeetingListAdapter;
 import com.example.mymeeting.R;
+import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
-import com.example.mymeeting.meetingItem;
+import com.example.mymeeting.db.meetingItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +27,7 @@ import cn.bmob.v3.listener.FindListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
-public class AllParticipantsActivity extends AppCompatActivity {
+public class AllParticipantsActivity extends BaseActivity {
 
     final String TAG = "AppCompatActivity";
 
