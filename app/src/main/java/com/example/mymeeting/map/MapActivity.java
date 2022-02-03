@@ -26,24 +26,20 @@ public class MapActivity extends BaseActivity {
 //
 //    final FragmentManager fragmentManager = getSupportFragmentManager();
 
-    private FragmentTransaction transaction;
-    private FragmentManager fragmentManager;
+    NavController navController;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            fragmentManager = getSupportFragmentManager();  //使用fragmentmanager和transaction来实现切换效果
-            transaction = fragmentManager.beginTransaction();
+
             switch (item.getItemId()) {
                 case R.id.navigation_outdoor:
-                    transaction.replace(R.id.nav_host_fragment,new OutdoorMapFragment());  //对应的java class
-                    transaction.commit();  //一定不要忘记commit，否则不会显示
+                    navController.navigate(R.id.action_indoorMapFragment_to_outdoorMapFragment);
                     return true;
                 case R.id.navigation_indoor:
-                    transaction.replace(R.id.nav_host_fragment,new IndoorMapFragment());  //对应的java class
-                    transaction.commit();  //一定不要忘记commit，否则不会显示
+                    navController.navigate(R.id.action_outdoorMapFragment_to_indoorMapFragment);
                     return true;
 
             }
@@ -51,13 +47,7 @@ public class MapActivity extends BaseActivity {
         }
     };
 
-    // 设置默认进来是tab 显示的页面
-    private void setDefaultFragment(){
-        fragmentManager = getSupportFragmentManager();
-        transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.nav_host_fragment,new OutdoorMapFragment());
-        transaction.commit();
-    }
+
 
 
     @Override
@@ -65,10 +55,11 @@ public class MapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        setDefaultFragment();
 
         BottomNavigationView navView = findViewById( R.id.nav_view );
         navView.setOnNavigationItemSelectedListener( mOnNavigationItemSelectedListener );
+
+        navController = Navigation.findNavController(this, R.id.my_nav_host_fragment);
 
     }
 
