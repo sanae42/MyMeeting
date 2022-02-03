@@ -10,21 +10,21 @@
         android:layout_height="match_parent">
 
 
-<!--        <FrameLayout-->
-<!--            android:id="@+id/nav_host_fragment"-->
+<!--        <fragment-->
+<!--            android:id="@+id/my_nav_host_fragment"-->
+<!--            android:name="androidx.navigation.fragment.NavHostFragment"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="match_parent"-->
 <!--            android:layout_above="@id/nav_view"-->
-<!--            android:layout_alignParentTop="true"/>-->
-        <fragment
-            android:id="@+id/my_nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+<!--            app:defaultNavHost="true"-->
+<!--            app:navGraph="@navigation/nav_graph" />-->
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/nav_view"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph" />
+            android:layout_above="@id/nav_view">
 
+        </androidx.viewpager.widget.ViewPager>
 
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
