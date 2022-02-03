@@ -30,7 +30,8 @@
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-                tools:ignore="MissingConstraints" >
+                tools:ignore="MissingConstraints"
+                >
                 <androidx.appcompat.widget.SearchView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -69,6 +70,7 @@
                 app:tabSelectedTextColor="@color/white"
                 app:tabTextColor="@color/purple_200"
                 app:tabIndicatorColor="@color/white"
+
                 />
 
             <androidx.viewpager.widget.ViewPager

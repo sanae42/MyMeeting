@@ -285,7 +285,7 @@ public class EditMeetingActivity extends BaseActivity {
                                 //TODO : 这里采用广播通知主活动刷新，活动管理器退出到主活动
                                 Intent intent_broadcast = new Intent("com.example.mymeeting.REFRESH_DATA");
                                 sendBroadcast(intent_broadcast, "com.example.mymeeting.REFRESH_DATA");
-                                ActivityCollector.backToMainActivity();
+//                                ActivityCollector.backToMainActivity();
 
 //                                // 自定义广播测试  失败
 //                                Intent intent_broadcast = new Intent("com.example.mymeeting.refreshData1");

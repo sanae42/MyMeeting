@@ -24,6 +24,7 @@ import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.db.meetingItem;
+import com.example.mymeeting.map.MapActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -126,6 +127,17 @@ public class MeetingActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), AllParticipantsActivity.class);
                 intent.putExtra("meeting",meeting);
+                startActivity(intent);
+            }
+        });
+
+        //会议功能之———会议导航
+        LinearLayout meetingMap = (LinearLayout)findViewById(R.id.meeting_map);
+        meetingMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), MapActivity.class);
                 startActivity(intent);
             }
         });
