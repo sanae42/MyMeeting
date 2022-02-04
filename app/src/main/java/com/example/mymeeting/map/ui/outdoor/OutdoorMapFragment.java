@@ -2,6 +2,8 @@ package com.example.mymeeting.map.ui.outdoor;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +25,24 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.route.BikingRouteResult;
+import com.baidu.mapapi.search.route.DrivingRouteResult;
+import com.baidu.mapapi.search.route.IndoorRouteResult;
+import com.baidu.mapapi.search.route.MassTransitRouteResult;
+import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
+import com.baidu.mapapi.search.route.RoutePlanSearch;
+import com.baidu.mapapi.search.route.TransitRouteResult;
+import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.example.mymeeting.R;
 
 import java.util.ArrayList;
@@ -47,22 +61,35 @@ public class OutdoorMapFragment extends Fragment {
 
     private TextView positionText;
 
+    private BaiduMap baiduMap;
+
+    private boolean isFirstLocate = true;
+
+//    private RoutePlanSearch mSearch;
+
+
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        //一定要在onCreate里进行百度地图的初始化
+//        SDKInitializer.initialize(getApplicationContext());
+//    }
+
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //一定要在onCreate里进行百度地图的初始化
-        SDKInitializer.initialize(getApplicationContext());
-    }
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_outdoor, container, false);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         ///////////////////////////////////////////////////////////
+        //地图视图
         mapView = (MapView) root.findViewById(R.id.bmapView);
+        //地图总控制器
+        baiduMap = mapView.getMap();
+        //允许显示设备位置
+        baiduMap.setMyLocationEnabled(true);
 
-        //注册一个定位监听器
-        mLocationClient = new LocationClient(getApplicationContext());
-        mLocationClient.registerLocationListener(new MyLocationListener());
+        //测试导航
+//        mSearch = RoutePlanSearch.newInstance();
+
+
 
         // 动态申请一组权限
         positionText = (TextView) root.findViewById(R.id.position_text_view);
@@ -85,12 +112,65 @@ public class OutdoorMapFragment extends Fragment {
 
 
         ///////////////////////////////////////////////////////////
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        //注册一个定位监听器
+
+        mLocationClient = new LocationClient(getActivity().getApplicationContext());
+        mLocationClient.registerLocationListener(new MyLocationListener());
+        SDKInitializer.initialize(getActivity().getApplicationContext());
+        root = inflater.inflate(R.layout.fragment_outdoor, container, false);
+
 
         return root;
     }
 
+//    OnGetRoutePlanResultListener listener = new OnGetRoutePlanResultListener(){
+//        @Override
+//        public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
+//            //创建BikingRouteOverlay实例
+//
+//            WalkingRouteOverlay overlay = new WalkingRouteOverlay(baiduMap);
+//            if (walkingRouteResult.getRouteLines().size() > 0) {
+//                //获取路径规划数据,(以返回的第一条路线为例）
+//                //为BikingRouteOverlay实例设置数据
+//                overlay.setData(walkingRouteResult.getRouteLines().get(0));
+//                //在地图上绘制BikingRouteOverlay
+//                overlay.addToMap();
+//            }
+//        }
+//
+//        @Override
+//        public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
+//
+//        }
+//
+//        @Override
+//        public void onGetMassTransitRouteResult(MassTransitRouteResult massTransitRouteResult) {
+//
+//        }
+//
+//        @Override
+//        public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
+//
+//        }
+//
+//        @Override
+//        public void onGetIndoorRouteResult(IndoorRouteResult indoorRouteResult) {
+//
+//        }
+//
+//        @Override
+//        public void onGetBikingRouteResult(BikingRouteResult bikingRouteResult) {
+//
+//        }
+//    };
+
     //开始定位，定位结果回调到MyLocationListener监听器
     private void requestLocation() {
+        initLocation();
         mLocationClient.start();
     }
 
@@ -103,7 +183,7 @@ public class OutdoorMapFragment extends Fragment {
                 if (grantResults.length > 0) {
                     for (int result : grantResults) {
                         if (result != PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(getContext(), "必须同意所有权限才能使用本程序", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "必须同意所有权限才能使用此功能", Toast.LENGTH_SHORT).show();
                             getActivity().finish();
                             return;
                         }
@@ -119,6 +199,48 @@ public class OutdoorMapFragment extends Fragment {
         }
     }
 
+
+    //移动我的位置到
+    private void navigateTo(BDLocation location) {
+        //第一次定位时动作
+        if (isFirstLocate) {
+            //只在第一次定位加载到我的位置
+            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+            MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
+            baiduMap.animateMapStatus(update);
+            update = MapStatusUpdateFactory.zoomTo(16f);
+            baiduMap.animateMapStatus(update);
+
+            //定义Maker坐标点
+            LatLng point = new LatLng(39.956911, 116.347533);
+            //构建Marker图标
+            BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.location2);
+
+            //构建MarkerOption，用于在地图上添加Marker
+            OverlayOptions option = new MarkerOptions()
+                    .position(point)
+                    .icon(bitmap);
+            //在地图上添加Marker，并显示
+            baiduMap.addOverlay(option);
+
+
+            isFirstLocate = false;
+        }
+
+        //实时显示用户位置绘制
+        MyLocationData.Builder locationBuilder = new MyLocationData.Builder();
+        locationBuilder.latitude(location.getLatitude());
+        locationBuilder.longitude(location.getLongitude());
+        MyLocationData locData = new MyLocationData.Builder()
+                .accuracy(location.getRadius())
+                // 此处设置开发者获取到的方向信息，顺时针0-360
+                .direction(location.getDirection()).latitude(location.getLatitude())
+                .longitude(location.getLongitude()).build();
+        baiduMap.setMyLocationData(locData);
+    }
+
+
+    //位置监听器
     public class MyLocationListener implements BDLocationListener {
 
         @Override
@@ -139,10 +261,11 @@ public class OutdoorMapFragment extends Fragment {
             }
             positionText.setText(currentPosition);
 
-//            if (location.getLocType() == BDLocation.TypeGpsLocation
-//                    || location.getLocType() == BDLocation.TypeNetWorkLocation) {
-//                navigateTo(location);
-//            }
+            //如果是第一次定位，加载地图到我的位置
+            if (location.getLocType() == BDLocation.TypeGpsLocation
+                    || location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                navigateTo(location);
+            }
         }
 
     }
@@ -152,9 +275,9 @@ public class OutdoorMapFragment extends Fragment {
         LocationClientOption option = new LocationClientOption();
         option.setScanSpan(5000);
         // 获取详细位置信息
-        //TODO：但这里详细位置信息并没有获取出来，还是null
         option.setIsNeedAddress(true);
-//        option.setCoorType("bd09ll"); //重要
+        //设置坐标系为GCJ02坐标系
+        option.setCoorType("bd09ll"); //重要
         mLocationClient.setLocOption(option);
     }
 
@@ -164,6 +287,8 @@ public class OutdoorMapFragment extends Fragment {
         //fragment销毁时停止mLocationClient
         mLocationClient.stop();
         mapView.onDestroy();
+        //fragment销毁时关闭个人位置显示功能
+        baiduMap.setMyLocationEnabled(false);
     }
 
     @Override

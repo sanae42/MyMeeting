@@ -359,6 +359,7 @@ public class MainActivity extends BaseActivity {
                                         Log.d(TAG, "找到参加者：");
                                     }
                                 }
+                                Log.d(TAG, "测试会议数据："+BmobUser.getCurrentUser().getUsername()+" "+m.getName()+""+m.getIfOriginator());
                                 m.save();
 
                             }

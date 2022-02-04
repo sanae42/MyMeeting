@@ -71,6 +71,7 @@ public class MeetingActivity extends BaseActivity {
         }
         collapsingToolbar.setTitle(meeting.getName()+""+meeting.getObjectId());
         Glide.with(this).load(meeting.getImageId()).into(fruitImageView);
+
         String fruitContent = generateFruitContent(meeting.getComtent());
 //        if(meeting.getIfOriginator()==true)fruitContent.concat(" 是申请者");
         if(meeting.getIfOriginator()==true)fruitContent="sdfgfdsdfghgfd";
@@ -114,9 +115,9 @@ public class MeetingActivity extends BaseActivity {
         //会议功能CardView，根据会议参加者状态不同设置显示和隐藏
         View meetingFunctionCardView = (View) findViewById(R.id.meeting_function_cardview);
         if(meeting.getIfParticipant()==false){
-            meetingEditCardView.setVisibility(View.GONE);
+            meetingFunctionCardView.setVisibility(View.GONE);
         }else if(meeting.getIfParticipant()==true){
-            meetingEditCardView.setVisibility(View.VISIBLE);
+            meetingFunctionCardView.setVisibility(View.VISIBLE);
         }
 
         //会议功能之———全部参会者
