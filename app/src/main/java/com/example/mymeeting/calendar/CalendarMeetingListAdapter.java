@@ -55,15 +55,16 @@ public class CalendarMeetingListAdapter extends RecyclerView.Adapter<CalendarMee
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                meetingItem meetingItem = mCalendarMeetingList.get(position);
-                Intent intent = new Intent(mContext, MeetingActivity.class);
-
-                //传递序列化的meetingItem到MeetingActivity
-                intent.putExtra("meeting_item",meetingItem);
-                //强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
-                //同时，在MeetingActivity监听编辑活动成功后也会再返回到主活动
-                ((MainActivity) mContext).startActivityForResult(intent, 3);
-//                mContext.startActivity(intent);
+                //会议日程下面的会议列表没有点击功能
+//                meetingItem meetingItem = mCalendarMeetingList.get(position);
+//                Intent intent = new Intent(mContext, MeetingActivity.class);
+//
+//                //传递序列化的meetingItem到MeetingActivity
+//                intent.putExtra("meeting_item",meetingItem);
+//                //强制转换mContext为MainActivity，使用startActivityForResult，可以不用手动刷新了
+//                //同时，在MeetingActivity监听编辑活动成功后也会再返回到主活动
+//                ((MainActivity) mContext).startActivityForResult(intent, 3);
+////                mContext.startActivity(intent);
             }
         });
     }

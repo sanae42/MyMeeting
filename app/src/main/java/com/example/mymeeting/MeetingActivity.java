@@ -24,6 +24,7 @@ import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.db.meetingItem;
+import com.example.mymeeting.group.MeetingGroupActivity;
 import com.example.mymeeting.map.MapActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -139,6 +140,17 @@ public class MeetingActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), MapActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //会议功能之———会议群组/布告板
+        LinearLayout meetingGroup = (LinearLayout)findViewById(R.id.meeting_group);
+        meetingGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), MeetingGroupActivity.class);
                 startActivity(intent);
             }
         });

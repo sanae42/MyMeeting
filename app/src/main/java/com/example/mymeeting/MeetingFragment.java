@@ -81,6 +81,8 @@ public class MeetingFragment extends Fragment {
                 parentActivity.getAttendingMeetingFromBomb();
             }
         });
+        //创建完成fragment布局后先展示进度条
+        showSwipeRefresh();
 
         return view;
     }

@@ -9,16 +9,18 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 获取sd卡写的权限，用于文件上传和下载 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 允许读取手机状态 用于创建BmobInstallation -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 广播权限 -->
-    <!--    自定义广播权限-->
+    <!-- 自定义广播权限 -->
     <uses-permission android:name="com.example.mymeeting.REFRESH_DATA" />
+
     <permission
         android:name="com.example.mymeeting.REFRESH_DATA"
-        android:protectionLevel="signature" />
-<!--    百度地图额外需要的权限-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" tools:ignore="ProtectedPermissions"/>
+        android:protectionLevel="signature" /> <!-- 百度地图额外需要的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name="org.litepal.LitePalApplication"
@@ -28,9 +30,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity
-            android:name=".map.MapActivity"
-            android:label="@string/title_activity_map"></activity>
+        <activity android:name=".group.MeetingGroupActivity"/>
+
         <!-- 自定义广播接收器 目前已不采用 -->
         <receiver
             android:name=".broadcast.MyReceiver"
@@ -40,24 +41,23 @@
                 <action android:name="com.example.mymeeting.REFRESH_DATA" />
             </intent-filter>
         </receiver>
-
-<!--        百度地图-->
+        <!-- 百度地图 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="VH6Mu2pXZlovYcfhNOsGGnCG0VmmN643" />
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote"></service>
-
-        <activity android:name=".calendar.CalendarActivity" />
-        <activity android:name=".allParticipants.AllParticipantsActivity" />
-        <activity android:name=".EditMeetingActivity" />
-        <activity android:name=".login.LoginActivity" /> <!-- 配置ContentProvider -->
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
             android:authorities="com.example.mymeeting.BmobContentProvider" />
 
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+        <activity android:name=".map.MapActivity"/>
+        <activity android:name=".calendar.CalendarActivity" />
+        <activity android:name=".allParticipants.AllParticipantsActivity" />
+        <activity android:name=".EditMeetingActivity" />
+        <activity android:name=".login.LoginActivity" /> <!-- 配置ContentProvider -->
         <activity android:name=".MeetingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
