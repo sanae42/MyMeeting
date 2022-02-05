@@ -88,6 +88,10 @@ public class MainActivity extends BaseActivity {
         intentFilter.addAction("com.example.mymeeting.REFRESH_DATA");
         receiver = new Receiver();
         registerReceiver(receiver, intentFilter);
+
+        //TODO:获取服务器数据写在onResume里
+        //从服务器获取数据，_User表中有attendingMeeting的版本
+        getAttendingMeetingFromBomb();
     }
 
     @Override
@@ -107,9 +111,6 @@ public class MainActivity extends BaseActivity {
         //    初始化控件
         initiateView();
         Connector.getDatabase(); //执行任何一次数据库操作，初始化数据库
-
-        //从服务器获取数据，_User表中有attendingMeeting的版本
-        getAttendingMeetingFromBomb();
 
         //TODO:按书上在onPause和onResume写了绑定/解除绑定广播接收器，但在onResume写的好像不可以，必须在onCreate里再写一遍（如下
         intentFilter = new IntentFilter();

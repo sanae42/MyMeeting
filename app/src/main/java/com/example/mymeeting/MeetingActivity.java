@@ -151,6 +151,7 @@ public class MeetingActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), MeetingGroupActivity.class);
+                intent.putExtra("meeting",meeting);
                 startActivity(intent);
             }
         });

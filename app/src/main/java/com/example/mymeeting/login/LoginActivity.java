@@ -141,7 +141,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 注册调用
+     * 登录调用
      */
     public void login(){
         String username = Username.getText().toString();
