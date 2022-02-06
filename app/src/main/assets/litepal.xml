@@ -3,13 +3,13 @@
 <!--数据库名-->
     <dbname value="myMeeting" />
 
-<!--  数据库版本2-->
-    <version value="2" />
+<!--  数据库版本3-->
+    <version value="3" />
 
     <list>
 <!--        <mapping class="com.example.mymeeting.db.MeetingData" />-->
         <mapping class="com.example.mymeeting.db.meetingItem" />
-
+        <mapping class="com.example.mymeeting.db.noteItem" />
     </list>
 
 </litepal>

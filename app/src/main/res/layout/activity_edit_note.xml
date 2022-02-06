@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/appBarLayout">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                tools:ignore="MissingConstraints" >
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/title_show"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="left"
+                        android:text="标111111111111111111111111111111111111题"
+                        android:textColor="@color/black"
+                        android:layout_margin="5dp"
+                        android:textSize="20sp"
+                        android:maxLines="2"/>
+                    <EditText
+                        android:id="@+id/title_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="left"
+                        android:text="标111111111111111111111111111111111111题"
+                        android:textColor="@color/black"
+                        android:layout_margin="5dp"
+                        android:textSize="20sp"
+                        android:maxLines="2">
+
+                    </EditText>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/detail"
+                    android:layout_below="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="left"
+                    android:text="s \ns"
+                    android:layout_margin="5dp"
+                    android:textSize="12sp"
+                    android:maxLines="2"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/content_show"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="left"
+                        android:text="s \ns"
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/content_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="left"
+                        android:text="s \ns"
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:hint="请输入正文..."
+                        >
+                    </com.google.android.material.textfield.TextInputEditText>
+                </LinearLayout>
+
+
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/edit_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_baseline_edit_24" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/save_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_baseline_save_24" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -26,6 +26,7 @@ import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.group.MeetingGroupActivity;
 import com.example.mymeeting.map.MapActivity;
+import com.example.mymeeting.note.AllNoteActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -151,6 +152,28 @@ public class MeetingActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), MeetingGroupActivity.class);
+                intent.putExtra("meeting",meeting);
+                startActivity(intent);
+            }
+        });
+
+        //会议功能之———会议详情
+        LinearLayout meetingDetail = (LinearLayout)findViewById(R.id.meeting_detail);
+        meetingDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        //会议功能之———会议笔记
+        LinearLayout meetingNote = (LinearLayout)findViewById(R.id.meeting_note);
+        meetingNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), AllNoteActivity.class);
+                intent.putExtra("type","meeting");
                 intent.putExtra("meeting",meeting);
                 startActivity(intent);
             }

@@ -30,9 +30,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity android:name=".group.MeetingGroupActivity"/>
-
-        <!-- 自定义广播接收器 目前已不采用 -->
+        <activity android:name=".note.EditNoteActivity"></activity>
+        <activity android:name=".note.AllNoteActivity" />
+        <activity android:name=".group.MeetingGroupActivity" /> <!-- 自定义广播接收器 目前已不采用 -->
         <receiver
             android:name=".broadcast.MyReceiver"
             android:enabled="true"
@@ -40,11 +40,11 @@
             <intent-filter>
                 <action android:name="com.example.mymeeting.REFRESH_DATA" />
             </intent-filter>
-        </receiver>
-        <!-- 百度地图 -->
+        </receiver> <!-- 百度地图 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="VH6Mu2pXZlovYcfhNOsGGnCG0VmmN643" />
+
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
             android:authorities="com.example.mymeeting.BmobContentProvider" />
@@ -53,7 +53,8 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-        <activity android:name=".map.MapActivity"/>
+
+        <activity android:name=".map.MapActivity" />
         <activity android:name=".calendar.CalendarActivity" />
         <activity android:name=".allParticipants.AllParticipantsActivity" />
         <activity android:name=".EditMeetingActivity" />
