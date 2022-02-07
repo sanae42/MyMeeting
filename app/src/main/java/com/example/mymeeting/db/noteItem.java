@@ -22,6 +22,8 @@ public class noteItem  extends LitePalSupport implements Serializable {
     private int meetingBombId;
     private String meetingName;
 
+    private String userObjectId;
+
     /////////////////////////////////////
 
     public void setId(long id) {
@@ -34,6 +36,10 @@ public class noteItem  extends LitePalSupport implements Serializable {
 
     /////////////////////////////////////
 
+
+    public void setUserObjectId(String userObjectId) {
+        this.userObjectId = userObjectId;
+    }
 
     public void setType(String type) {
         this.type = type;
@@ -97,5 +103,9 @@ public class noteItem  extends LitePalSupport implements Serializable {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getUserObjectId() {
+        return userObjectId;
     }
 }

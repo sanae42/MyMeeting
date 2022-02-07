@@ -37,11 +37,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
         <activity android:name=".sign.MeetingSignActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".note.EditNoteActivity" />
         <activity android:name=".note.AllNoteActivity" />
@@ -53,11 +48,11 @@
         <activity android:name=".login.LoginActivity" /> <!-- 配置ContentProvider -->
         <activity android:name=".MeetingActivity" />
         <activity android:name=".MainActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
 

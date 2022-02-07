@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.BmobUser;
+
 import static org.litepal.LitePalApplication.getContext;
 
 public class AllNoteActivity extends BaseActivity {
@@ -171,7 +173,7 @@ public class AllNoteActivity extends BaseActivity {
                 backupList.add(n);
             }
         }else if(editType.equals("meeting")){
-            List<noteItem> notes = DataSupport.where("meetingObjectId = ?",meeting.getObjectId()).find(noteItem.class);
+            List<noteItem> notes = DataSupport.where("meetingObjectId = ? and userObjectId = ?" ,meeting.getObjectId(), BmobUser.getCurrentUser().getObjectId()).find(noteItem.class);
             for (noteItem n:notes){
                 allNoteList.add(n);
                 backupList.add(n);

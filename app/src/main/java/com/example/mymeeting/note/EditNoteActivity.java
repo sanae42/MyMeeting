@@ -30,6 +30,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.BmobUser;
+
 import static org.litepal.LitePalApplication.getContext;
 
 public class EditNoteActivity extends BaseActivity {
@@ -118,6 +120,7 @@ public class EditNoteActivity extends BaseActivity {
                     n.setMeetingBombId(meeting.getBombId());
                     n.setMeetingName(meeting.getName());
                     n.setMeetingObjectId(meeting.getObjectId());
+                    n.setUserObjectId(BmobUser.getCurrentUser().getObjectId());
                     if(n.save()==true){
                         Toast.makeText(getContext(), "笔记保存成功", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent();
@@ -221,6 +224,7 @@ public class EditNoteActivity extends BaseActivity {
                 n.setMeetingBombId(meeting.getBombId());
                 n.setMeetingName(meeting.getName());
                 n.setMeetingObjectId(meeting.getObjectId());
+                n.setUserObjectId(BmobUser.getCurrentUser().getObjectId());
 
                 dialog.dismiss();
 
