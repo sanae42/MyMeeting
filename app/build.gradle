@@ -30,7 +30,6 @@ android {
 
 allprojects {
     repositories {
-        //    NiceSpinner下滑栏引入
         maven { url "https://jitpack.io" }
     }
 }
@@ -84,4 +83,6 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment"
     implementation "android.arch.navigation:navigation-ui"
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha01'
+//    二维码
+    implementation "com.github.yuzhiqiang1993:zxing:2.2.5"
 }
