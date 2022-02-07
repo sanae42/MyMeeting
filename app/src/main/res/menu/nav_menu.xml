@@ -6,9 +6,9 @@
             android:icon="@drawable/ic_baseline_calendar_today_24"
             android:title="会议日程" />
         <item
-            android:id="@+id/nav_friends"
-            android:icon="@drawable/ic_baseline_android_24"
-            android:title="Friends" />
+            android:id="@+id/nav_note"
+            android:icon="@drawable/ic_baseline_note_24"
+            android:title="会议笔记" />
         <item
             android:id="@+id/nav_location"
             android:icon="@drawable/ic_baseline_android_24"

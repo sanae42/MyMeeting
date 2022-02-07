@@ -45,17 +45,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/title_show"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="left"
-                        android:text="标111111111111111111111111111111111111题"
-                        android:textColor="@color/black"
-                        android:layout_margin="5dp"
-                        android:textSize="20sp"
-                        android:maxLines="2"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/title_show"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:gravity="left"-->
+<!--                        android:text="标111111111111111111111111111111111111题"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:layout_margin="5dp"-->
+<!--                        android:textSize="20sp"-->
+<!--                        android:maxLines="2"/>-->
                     <EditText
                         android:id="@+id/title_edit"
                         android:layout_width="match_parent"
@@ -64,8 +64,11 @@
                         android:gravity="left"
                         android:text="标111111111111111111111111111111111111题"
                         android:textColor="@color/black"
-                        android:layout_margin="5dp"
-                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="0dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:textSize="22sp"
                         android:maxLines="2">
 
                     </EditText>
@@ -79,8 +82,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="left"
-                    android:text="s \ns"
-                    android:layout_margin="5dp"
+                    android:text=""
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp"
                     android:textSize="12sp"
                     android:maxLines="2"/>
 
@@ -88,25 +94,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/content_show"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="left"
-                        android:text="s \ns"
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"/>
+<!--                    <TextView-->
+<!--                        android:id="@+id/content_show"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:gravity="left"-->
+<!--                        android:text="s \ns"-->
+<!--                        android:layout_margin="5dp"-->
+<!--                        android:textSize="14sp"/>-->
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/content_edit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="left"
-                        android:text="s \ns"
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
+                        android:text=""
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:textSize="18sp"
                         android:hint="请输入正文..."
+                        android:background="#00000000"
                         >
                     </com.google.android.material.textfield.TextInputEditText>
                 </LinearLayout>
@@ -120,13 +130,13 @@
 
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/edit_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_baseline_edit_24" />
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/edit_fab"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="bottom|end"-->
+<!--            android:layout_margin="16dp"-->
+<!--            android:src="@drawable/ic_baseline_edit_24" />-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/save_fab"
             android:layout_width="wrap_content"

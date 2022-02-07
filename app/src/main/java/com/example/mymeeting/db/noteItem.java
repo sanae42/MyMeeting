@@ -7,6 +7,9 @@ import java.util.Date;
 
 public class noteItem  extends LitePalSupport implements Serializable {
 
+    //Litepal数据库自动生成的自增的ID
+    private long id;
+
     private String title; //笔记标题
     private String content; //笔记内容
     private String type; //笔记类型
@@ -18,6 +21,16 @@ public class noteItem  extends LitePalSupport implements Serializable {
     private String meetingObjectId;
     private int meetingBombId;
     private String meetingName;
+
+    /////////////////////////////////////
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
+    }
 
     /////////////////////////////////////
 

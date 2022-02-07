@@ -28,6 +28,7 @@ import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.calendar.CalendarActivity;
 import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.login.LoginActivity;
+import com.example.mymeeting.note.AllNoteActivity;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -161,19 +162,22 @@ public class MainActivity extends BaseActivity {
 
                 switch (item.getItemId()){
                     case R.id.nav_calendar:
-                        Intent intent = new Intent();
-                        intent.setClass(getApplicationContext(), CalendarActivity.class);
-                        startActivity(intent);
+                        Intent intent_calendar = new Intent();
+                        intent_calendar.setClass(getApplicationContext(), CalendarActivity.class);
+                        startActivity(intent_calendar);
                         break;
-                    case R.id.nav_friends:
-                        Log.d(TAG, "onNavigationItemSelected: nav_friends");
+                    case R.id.nav_note:
+                        Intent intent_note = new Intent();
+                        intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
+                        intent_note.putExtra("type","all");
+                        startActivity(intent_note);
                         break;
                     default:
                         break;
                 }
 
         //     点击NavigationView中选项关闭侧边栏
-                mDrawerLayout.closeDrawers();
+//                mDrawerLayout.closeDrawers();
                 return true;
             }
         });

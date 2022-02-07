@@ -18,7 +18,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:id="@+id/search"
-                android:title="搜索参会者"
                 android:outlineAmbientShadowColor="@color/purple_200"
                 android:outlineSpotShadowColor="@color/purple_200">
 

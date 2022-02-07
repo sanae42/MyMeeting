@@ -79,6 +79,8 @@ public class CalendarActivity extends BaseActivity {
             }
         });
 
+        getDataFromLitePal(calendar.getSelectedCalendar());
+
 
     }
 

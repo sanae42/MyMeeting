@@ -2,20 +2,25 @@ package com.example.mymeeting.note;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mymeeting.EditMeetingActivity;
+import com.example.mymeeting.MeetingFragment;
 import com.example.mymeeting.R;
 import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.allParticipants.AllParticipantsListAdapter;
@@ -29,6 +34,8 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.litepal.LitePalApplication.getContext;
 
 public class AllNoteActivity extends BaseActivity {
 
@@ -87,8 +94,8 @@ public class AllNoteActivity extends BaseActivity {
 
         //        recyclerview设置
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-//        适配器设置，设置显示1列
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+//        适配器设置，设置显示2列
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new AllNoteListAdapter(allNoteList);
         recyclerView.setAdapter(adapter);
@@ -97,13 +104,18 @@ public class AllNoteActivity extends BaseActivity {
         adapter.setOnClickListener(new AllNoteListAdapter.OnClickListener(){
             @Override
             public void onClick(View itemView, int position) {
-
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), EditNoteActivity.class);
+                intent.putExtra("type","edit");
+                intent.putExtra("note",allNoteList.get(position));
+                //监听返回
+                startActivityForResult(intent,1);
                 Log.d("列表项点击", "onClick"+"位置"+position);
             }
 
             @Override
             public void onLongClick(View itemView, int position) {
-
+                showDialog(allNoteList.get(position));
                 Log.d("列表项点击", "onLongClick"+"位置"+position);
             }
 
@@ -193,11 +205,67 @@ public class AllNoteActivity extends BaseActivity {
         switch (requestCode){
             case 1:
                 //监听到编辑活动返回的结果
+                if(resultCode==RESULT_OK){
+                    getNoteDateFromLitePal();
+                }
                 getNoteDateFromLitePal();
                 break;
             default:
         }
     }
+    /**
+     * 编辑确认对话框
+     */
+    private void showDialog(noteItem note) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("笔记操作");
+        builder.setMessage("笔记操作");
+        builder.setIcon(R.drawable.ic_baseline_edit_24);
+//        //点击对话框以外的区域是否让对话框消失
+//        builder.setCancelable(true);
+        //设置正面按钮
+        builder.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("对话框测试","点击了编辑");
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), EditNoteActivity.class);
+                intent.putExtra("type","edit");
+                intent.putExtra("note",note);
+                //监听返回
+                startActivityForResult(intent,1);
+                dialog.dismiss();
+            }
+        });
+        //设置反面按钮
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("对话框测试","点击了取消");
+                dialog.dismiss();
+            }
+        });
+        //设置中立按钮
+        builder.setNeutralButton("删除", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("对话框测试","点击了删除");
+                dialog.dismiss();
+                if(note.delete()>0){
+                    Toast.makeText(getContext(), "笔记删除成功", Toast.LENGTH_SHORT).show();
+                    getNoteDateFromLitePal();
+                }else {
+                    Toast.makeText(getContext(), "笔记删除失败", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
 
     public void search(String s)
     {
