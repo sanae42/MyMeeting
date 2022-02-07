@@ -167,7 +167,7 @@ public class AllNoteActivity extends BaseActivity {
         allNoteList.clear(); //清空会议列表
         backupList.clear();
         if(editType.equals("all")){
-            List<noteItem> notes = DataSupport.findAll(noteItem.class);
+            List<noteItem> notes = DataSupport.where("userObjectId = ?" ,BmobUser.getCurrentUser().getObjectId()).find(noteItem.class);
             for (noteItem n:notes){
                 allNoteList.add(n);
                 backupList.add(n);

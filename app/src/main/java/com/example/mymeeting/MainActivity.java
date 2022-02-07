@@ -167,10 +167,15 @@ public class MainActivity extends BaseActivity {
                         startActivity(intent_calendar);
                         break;
                     case R.id.nav_note:
-                        Intent intent_note = new Intent();
-                        intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
-                        intent_note.putExtra("type","all");
-                        startActivity(intent_note);
+                        if(BmobUser.isLogin()==true){
+                            Intent intent_note = new Intent();
+                            intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
+                            intent_note.putExtra("type","all");
+                            startActivity(intent_note);
+                        }else {
+                            Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
+                        }
+
                         break;
                     default:
                         break;
@@ -225,19 +230,24 @@ public class MainActivity extends BaseActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "要新建会议吗（测试会议）", Snackbar.LENGTH_SHORT)
-                        .setAction("是的", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent();
-                                intent.setClass(getApplicationContext(), EditMeetingActivity.class);
-                                //设置活动跳转传值为：新建活动
-                                intent.putExtra("type","new");
-                                startActivityForResult(intent,2);
-                                //重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
-                            }
-                        })
-                        .show();
+                if(BmobUser.isLogin()==true){
+                    Snackbar.make(v, "要新建会议吗（测试会议）", Snackbar.LENGTH_SHORT)
+                            .setAction("是的", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent();
+                                    intent.setClass(getApplicationContext(), EditMeetingActivity.class);
+                                    //设置活动跳转传值为：新建活动
+                                    intent.putExtra("type","new");
+                                    startActivityForResult(intent,2);
+                                    //重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
+                                }
+                            })
+                            .show();
+                }else {
+                    Toast.makeText(getContext(), "登录后才能新建会议", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -256,8 +266,8 @@ public class MainActivity extends BaseActivity {
      */
     public void getAttendingMeetingFromBomb(){
         if(BmobUser.isLogin()==false){
-            //重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
-            return;
+            //重要，如果未登录时直接获取全部会议，无需获取当前用户参会list
+            getDataFromBombVersion2();
         }
 
         //展示下拉刷新条 会有“on a null object reference”问题
@@ -291,15 +301,12 @@ public class MainActivity extends BaseActivity {
      * （_User表中有attendingMeeting的获取会议数据函数，被其他函数调用）从服务器获取会议信息，由getAttendingMeetingFromBomb调用
      */
     public void getDataFromBombVersion2(){
-        if(BmobUser.isLogin()==false){
-            //TODO:重要，如果未登录就尝试获取BmobUser.getCurrentUser会闪退，所以要先判断是否登录
-            return;
-        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String userObjectId = BmobUser.getCurrentUser(_User.class).getObjectId();
                 Bmob.initialize(getContext(),"de0d0d10141439f301fc9d139da66920");
+
                 BmobQuery<Meeting> bmobQuery = new BmobQuery<>();
                 //增加了对会议状态的搜索条件
                 bmobQuery.addWhereEqualTo("state", "normal");
@@ -350,21 +357,24 @@ public class MainActivity extends BaseActivity {
 
 
                                 //TODO：设置是否申请和是否参会
+                                //未登录时默认都为false
                                 m.setIfOriginator(false);
                                 m.setIfParticipant(false);
-
-                                if(meeting.getOriginator()!=null)
-                                    if(meeting.getOriginator().getObjectId().equals(userObjectId)){
-                                        m.setIfOriginator(true);
-                                        Log.d(TAG, "找到申请者：");
-                                    }
-                                for(Meeting M:attendingMeetingList){
-                                    if(M.getObjectId().equals(meeting.getObjectId())){
-                                        m.setIfParticipant(true);
-                                        Log.d(TAG, "找到参加者：");
+                                //登录时方才执行：
+                                if(BmobUser.isLogin()==true){
+                                    if(meeting.getOriginator()!=null)
+                                        if(meeting.getOriginator().getObjectId().equals(BmobUser.getCurrentUser(_User.class).getObjectId())){
+                                            m.setIfOriginator(true);
+                                            Log.d(TAG, "找到申请者：");
+                                        }
+                                    for(Meeting M:attendingMeetingList){
+                                        if(M.getObjectId().equals(meeting.getObjectId())){
+                                            m.setIfParticipant(true);
+                                            Log.d(TAG, "找到参加者：");
+                                        }
                                     }
                                 }
-                                Log.d(TAG, "测试会议数据："+BmobUser.getCurrentUser().getUsername()+" "+m.getName()+""+m.getIfOriginator());
+
                                 m.save();
 
                             }

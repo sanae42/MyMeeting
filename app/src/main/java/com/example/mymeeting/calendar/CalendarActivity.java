@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,12 +55,17 @@ public class CalendarActivity extends BaseActivity {
 
 
         calendar = (CalendarView)findViewById(R.id.calendar);
+
         List<meetingItem> meetings = DataSupport.findAll(meetingItem.class);
+
         for(meetingItem m:meetings){
             Calendar c = new Calendar();
-            c.setYear(m.getHostDate().getYear());
-            c.setMonth(m.getHostDate().getMonth());
-            c.setDay(m.getHostDate().getDay());
+            c.setYear(m.getHostDate().getYear()+1900);
+            c.setMonth(m.getHostDate().getMonth()+1);
+            c.setDay(m.getHostDate().getDate());
+            Log.d(TAG, "全部日期0："+m.getHostDate().toString());
+            Log.d(TAG, "全部本地会议日期1："+m.getHostDate().getYear()+" "+m.getHostDate().getMonth()+" "+m.getHostDate().getDay());
+            Log.d(TAG, "全部本地数据库会议日期2："+c.getYear()+" "+c.getMonth()+" "+c.getDay());
             calendar.addSchemeDate(c);
         }
 
@@ -75,6 +81,7 @@ public class CalendarActivity extends BaseActivity {
 
             @Override
             public void onCalendarSelect(Calendar c, boolean isClick) {
+//                Log.d(TAG, "日历选中："+calendar.getSelectedCalendar().getYear()+" "+calendar.getSelectedCalendar().getMonth()+" "+calendar.getSelectedCalendar().getDay());
                 getDataFromLitePal(calendar.getSelectedCalendar());
             }
         });
@@ -88,7 +95,9 @@ public class CalendarActivity extends BaseActivity {
         List<meetingItem> meetings = DataSupport.findAll(meetingItem.class);
         calendarMeetingList.clear();
         for(meetingItem m:meetings){
-            if(m.getHostDate().getYear()==c.getYear() && m.getHostDate().getMonth()==c.getMonth() && m.getHostDate().getDay()==c.getDay()){
+            if((m.getHostDate().getYear()+1900)==c.getYear() && (m.getHostDate().getMonth()+1)==c.getMonth() && m.getHostDate().getDate()==c.getDay()){
+                Log.d(TAG, "日历选中："+calendar.getSelectedCalendar().getYear()+" "+calendar.getSelectedCalendar().getMonth()+" "+calendar.getSelectedCalendar().getDay());
+                Log.d(TAG, "日历选中2："+m.getHostDate().getYear()+" "+m.getHostDate().getMonth()+" "+m.getHostDate().getDay());
                 calendarMeetingList.add(m);
             }
         }

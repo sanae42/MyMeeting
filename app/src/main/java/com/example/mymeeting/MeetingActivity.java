@@ -27,6 +27,7 @@ import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.group.MeetingGroupActivity;
 import com.example.mymeeting.map.MapActivity;
 import com.example.mymeeting.note.AllNoteActivity;
+import com.example.mymeeting.sign.MeetingSignActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -82,6 +83,10 @@ public class MeetingActivity extends BaseActivity {
 
         //悬浮按钮，根据参会状态不同设置不同样式
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+        //未参会时不显示fab
+        if(BmobUser.isLogin()==false){
+            fab.setVisibility(View.GONE);
+        }
         if(meeting.getIfParticipant()==false){
             fab.setImageResource(R.drawable.attend);
         }else if(meeting.getIfParticipant()==true){
@@ -175,6 +180,19 @@ public class MeetingActivity extends BaseActivity {
                 intent.setClass(getApplicationContext(), AllNoteActivity.class);
                 intent.putExtra("type","meeting");
                 intent.putExtra("meeting",meeting);
+                startActivity(intent);
+            }
+        });
+
+        //会议功能之———会议签到
+        LinearLayout meetingSign = (LinearLayout)findViewById(R.id.meeting_sign);
+        meetingSign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), MeetingSignActivity.class);
+//                intent.putExtra("type","meeting");
+//                intent.putExtra("meeting",meeting);
                 startActivity(intent);
             }
         });

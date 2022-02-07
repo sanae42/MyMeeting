@@ -98,7 +98,7 @@ public class EditMeetingActivity extends BaseActivity {
             locationSpinner.setSelectedIndex(0);   //后续再用内联函数之类的方式实现，懒得写了，就选0了
 
             lengthEditText.setText(meetingToEdit.getLength());
-            hostTimeCalendar.scrollToCalendar(meetingToEdit.getHostDate().getYear(),meetingToEdit.getHostDate().getMonth(),meetingToEdit.getHostDate().getDay());
+            hostTimeCalendar.scrollToCalendar(meetingToEdit.getHostDate().getYear()+1900, meetingToEdit.getHostDate().getMonth()+1,meetingToEdit.getHostDate().getDate());
             hostTimePicker.setMinute(meetingToEdit.getHostDate().getMinutes());
             hostTimePicker.setHour(meetingToEdit.getHostDate().getHours());
 
@@ -141,6 +141,7 @@ public class EditMeetingActivity extends BaseActivity {
 
         lengthEditText = (EditText)findViewById(R.id.lengthEditText);
         hostTimeCalendar = (CalendarView)findViewById(R.id.hostTimeCalendar);
+//        Log.d(TAG, "日历选中："+hostTimeCalendar.getSelectedCalendar().getYear()+" "+hostTimeCalendar.getSelectedCalendar().getMonth()+" "+hostTimeCalendar.getSelectedCalendar().getDay());
         hostTimePicker = (TimePicker)findViewById(R.id.hostTimePicker);
 
         //        悬浮按钮
@@ -178,12 +179,15 @@ public class EditMeetingActivity extends BaseActivity {
 
         String length = lengthEditText.getText().toString();
         Date hDate = new Date();
-        hDate.setYear(hostTimeCalendar.getCurYear());
-        hDate.setMonth(hostTimeCalendar.getCurMonth());
-        hDate.setDate(hostTimeCalendar.getCurDay());
+//        hDate = hostTimeCalendar.getSelectedCalendar().
+//        hDate.setYear(hostTimeCalendar.getSelectedCalendar().getYear());
+//        hDate.setMonth(hostTimeCalendar.getSelectedCalendar().getMonth());
+//        hDate.setDate(hostTimeCalendar.getSelectedCalendar().getDay());
+        hDate.setTime(hostTimeCalendar.getSelectedCalendar().getTimeInMillis());
         hDate.setHours(hostTimePicker.getCurrentHour());
         hDate.setMinutes(hostTimePicker.getCurrentMinute());
         hDate.setSeconds(0);
+        Log.d(TAG, "日历选中："+ hDate.toString());
         BmobDate hostDate = new BmobDate(hDate);
         BmobDate registrationDate= new BmobDate(new Date());
 
@@ -285,7 +289,9 @@ public class EditMeetingActivity extends BaseActivity {
                                 //TODO : 这里采用广播通知主活动刷新，活动管理器退出到主活动
                                 Intent intent_broadcast = new Intent("com.example.mymeeting.REFRESH_DATA");
                                 sendBroadcast(intent_broadcast, "com.example.mymeeting.REFRESH_DATA");
-//                                ActivityCollector.backToMainActivity();
+                                //取消展示进度条
+                                progressDialog.dismiss();
+                                ActivityCollector.backToMainActivity();
 
 //                                // 自定义广播测试  失败
 //                                Intent intent_broadcast = new Intent("com.example.mymeeting.refreshData1");
