@@ -35,8 +35,7 @@ allprojects {
 }
 
 dependencies {
-
-    compile fileTree(dir:'libs', include:['*.jar'])
+    implementation fileTree(dir:'libs', include:['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
@@ -85,4 +84,5 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha01'
 //    二维码
     implementation "com.github.yuzhiqiang1993:zxing:2.2.5"
+
 }

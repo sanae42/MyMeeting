@@ -192,7 +192,7 @@ public class MeetingActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), MeetingSignActivity.class);
 //                intent.putExtra("type","meeting");
-//                intent.putExtra("meeting",meeting);
+                intent.putExtra("meeting",meeting);
                 startActivity(intent);
             }
         });

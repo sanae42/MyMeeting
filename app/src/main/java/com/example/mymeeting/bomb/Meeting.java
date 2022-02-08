@@ -38,12 +38,17 @@ public class Meeting extends BmobObject {
 
     private BmobRelation participant;//与会者，一对多关系
 
+    private BmobRelation signinParticipant;//已签到与会者，一对多关系
 
 //    private String objectId;  //不可设置，否则会出BmobObject的那个问题
 
 
     //////////
 
+
+    public void setSigninParticipant(BmobRelation signinParticipant) {
+        this.signinParticipant = signinParticipant;
+    }
 
     public void setId(Number id) {
         this.id = id;
@@ -147,6 +152,10 @@ public class Meeting extends BmobObject {
 
     public String getType() {
         return type;
+    }
+
+    public BmobRelation getSigninParticipant() {
+        return signinParticipant;
     }
 
     public String getLocation() {
