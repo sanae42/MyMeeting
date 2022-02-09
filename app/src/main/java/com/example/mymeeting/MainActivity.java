@@ -26,6 +26,7 @@ import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.calendar.CalendarActivity;
+import com.example.mymeeting.chat.ChatActivity;
 import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.login.LoginActivity;
 import com.example.mymeeting.note.AllNoteActivity;
@@ -175,7 +176,15 @@ public class MainActivity extends BaseActivity {
                         }else {
                             Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
                         }
-
+                        break;
+                    case R.id.nav_chat:
+                        if(BmobUser.isLogin()==true){
+                            Intent intent_chat = new Intent();
+                            intent_chat.setClass(getApplicationContext(), ChatActivity.class);
+                            startActivity(intent_chat);
+                        }else {
+                            Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     default:
                         break;

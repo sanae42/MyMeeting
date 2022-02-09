@@ -34,7 +34,7 @@
 
         android:background="?android:attr/windowBackground"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/map_bottom_nav_menu" />
     </RelativeLayout>
 
 
