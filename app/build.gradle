@@ -84,5 +84,7 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha01'
 //    二维码
     implementation "com.github.yuzhiqiang1993:zxing:2.2.5"
+    //曲线图  饼状图 折线图
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 }

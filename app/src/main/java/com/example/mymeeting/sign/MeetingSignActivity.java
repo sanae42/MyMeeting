@@ -7,6 +7,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -32,9 +34,16 @@ import android.widget.Toast;
 
 import com.example.mymeeting.R;
 import com.example.mymeeting.activityCollector.BaseActivity;
+import com.example.mymeeting.allParticipants.AllParticipantsListAdapter;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.db.meetingItem;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -78,8 +87,16 @@ public class MeetingSignActivity extends BaseActivity {
     LinearLayout unsignedLayout;
     LinearLayout signedLayout;
 
+    PieChart pieChart;
+
     CardView QRcodeCardview;
     ImageView QRcode;
+
+    CardView userCardview;
+
+    //recyclerview适配器 使用的allParticipants的适配器和item布局
+    private AllParticipantsListAdapter signedAdapter;
+    private AllParticipantsListAdapter unsignedAdapter;
 
     //二维码
     Bitmap bitmap;
@@ -172,8 +189,24 @@ public class MeetingSignActivity extends BaseActivity {
 
         signinDetail = (TextView)findViewById(R.id.signin_detail);
 
+        //        recyclerview设置
+        RecyclerView signedRecyclerView = (RecyclerView) findViewById(R.id.signed_recycler_view);
+        RecyclerView unsignedRecyclerView = (RecyclerView) findViewById(R.id.unsigned_recycler_view);
+
+        GridLayoutManager signedLayoutManager = new GridLayoutManager(this, 1);
+        GridLayoutManager unsignedLayoutManager = new GridLayoutManager(this, 1);
+        signedRecyclerView.setLayoutManager(signedLayoutManager);
+        unsignedRecyclerView.setLayoutManager(unsignedLayoutManager);
+
+        signedAdapter = new AllParticipantsListAdapter(allSigninParticipantList);
+        signedRecyclerView.setAdapter(signedAdapter);
+        unsignedAdapter = new AllParticipantsListAdapter(allUnsigninParticipantList);
+        unsignedRecyclerView.setAdapter(unsignedAdapter);
+
         signedLayout = (LinearLayout) findViewById(R.id.signed_layout);
         unsignedLayout = (LinearLayout) findViewById(R.id.unsigned_layout);
+
+        pieChart = (PieChart) findViewById(R.id.picChart);
 
         QRcodeCardview = (CardView) findViewById(R.id.QRcode_cardview);
         QRcode = (ImageView) findViewById(R.id.QRcode);
@@ -191,6 +224,11 @@ public class MeetingSignActivity extends BaseActivity {
         }
         else {
             QRcodeCardview.setVisibility(View.GONE);
+        }
+
+        userCardview = (CardView) findViewById(R.id.user_cardview);
+        if(meeting.getIfOriginator()==false){
+            userCardview.setVisibility(View.GONE);
         }
     }
 
@@ -233,12 +271,15 @@ public class MeetingSignActivity extends BaseActivity {
      */
     private void saveImg(Bitmap bitmap){
         String fileName = "qr_"+System.currentTimeMillis() + ".jpg";
-        boolean isSaveSuccess = ImageUtil.saveImageToGallery(MeetingSignActivity.this, bitmap,fileName);
-        if (isSaveSuccess) {
-            Toast.makeText(getContext(), "图片已保存至本地", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getContext(), "保存图片失败，请稍后重试", Toast.LENGTH_SHORT).show();
-        }
+        Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
+        //小米11在生成图片uri后可以直接保存图片到相册，暂时通过这种方式实现保存图片到本地
+        Toast.makeText(getContext(), "图片已保存至本地", Toast.LENGTH_LONG).show();
+//        boolean isSaveSuccess = ImageUtil.saveImageToGallery(MeetingSignActivity.this, bitmap,fileName);
+//        if (isSaveSuccess) {
+//            Toast.makeText(getContext(), "图片已保存至本地", Toast.LENGTH_LONG).show();
+//        } else {
+//            Toast.makeText(getContext(), "保存图片失败，请稍后重试", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     /**
@@ -358,6 +399,7 @@ public class MeetingSignActivity extends BaseActivity {
      * 处理从服务器得到的数据/绘制图表
      */
     private void processingData(){
+
         allSigninParticipantList.clear();
         for(_User u1: allParticipantList){
             for(_User u2: allSigninList){
@@ -373,9 +415,34 @@ public class MeetingSignActivity extends BaseActivity {
             }
         }
 
+        signedAdapter.notifyDataSetChanged();
+        unsignedAdapter.notifyDataSetChanged();
 
 
         signinDetail.setText("已签到："+allSigninParticipantList.size()+"\n未签到："+allUnsigninParticipantList.size());
+
+        List strings = new ArrayList<>();
+        Integer integer = (allUnsigninParticipantList.size()/allParticipantList.size())*100;
+        strings.add(new PieEntry(integer,"未签到"));
+        strings.add(new PieEntry(100-integer,"已签到"));
+        PieDataSet dataSet = new PieDataSet(strings,"");
+        ArrayList colors = new ArrayList();
+        colors.add(ContextCompat.getColor(this,R.color.orange));
+        colors.add(ContextCompat.getColor(this,R.color.blue));
+        dataSet.setColors(colors);
+        PieData pieData = new PieData(dataSet);
+        pieData.setDrawValues(true);
+        //百分比显示
+        pieData.setValueFormatter(new PercentFormatter());
+        pieChart.setUsePercentValues(true);
+        Description description = new Description();
+        description.setText("");
+        pieChart.setDescription(description);
+        pieData.setValueTextSize(12f);
+        pieChart.setData(pieData);
+        pieChart.invalidate();
+
+
         Boolean signed = false;
         for (_User u: allSigninParticipantList){
             if(u.getObjectId().equals(BmobUser.getCurrentUser().getObjectId())==true){
