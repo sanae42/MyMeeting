@@ -88,8 +88,6 @@ dependencies {
     //曲线图  饼状图 折线图
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-    //环信IM
+    //环信IM SDK
     implementation 'io.hyphenate:hyphenate-chat:3.8.9'
-
-
 }
