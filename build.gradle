@@ -3,6 +3,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+        //环信IM
+        mavenCentral()
+        maven { url 'http://developer.huawei.com/repo'} //如果需要使用华为推送HMS，则需要加上此句
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.3"
@@ -16,8 +19,12 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //环信IM
+        mavenCentral()
+        maven { url 'http://developer.huawei.com/repo'} //如果需要使用华为推送HMS，则需要加上此句
     }
 }
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir

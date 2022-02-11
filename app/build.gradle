@@ -22,6 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    //自3.6.0开始需要java8的支持
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -86,5 +87,9 @@ dependencies {
     implementation "com.github.yuzhiqiang1993:zxing:2.2.5"
     //曲线图  饼状图 折线图
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    //环信IM
+    implementation 'io.hyphenate:hyphenate-chat:3.8.9'
+
 
 }

@@ -422,7 +422,10 @@ public class MeetingSignActivity extends BaseActivity {
         signinDetail.setText("已签到："+allSigninParticipantList.size()+"\n未签到："+allUnsigninParticipantList.size());
 
         List strings = new ArrayList<>();
-        Integer integer = (allUnsigninParticipantList.size()/allParticipantList.size())*100;
+        Double d1 = Double.valueOf(allUnsigninParticipantList.size());
+        Double d2 = Double.valueOf(allParticipantList.size());
+        Double d3 = (d1/d2)*100;
+        Integer integer = d3.intValue();
         strings.add(new PieEntry(integer,"未签到"));
         strings.add(new PieEntry(100-integer,"已签到"));
         PieDataSet dataSet = new PieDataSet(strings,"");
