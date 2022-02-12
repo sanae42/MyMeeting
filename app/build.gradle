@@ -88,6 +88,16 @@ dependencies {
     //曲线图  饼状图 折线图
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-    //环信IM SDK
-    implementation 'io.hyphenate:hyphenate-chat:3.8.9'
+//    //环信IM SDK
+//    implementation 'io.hyphenate:hyphenate-chat:3.8.9'
+    // EaseIMKit
+    ////api (project(path: ':ease-im-kit'))
+    implementation 'io.hyphenate:ease-im-kit:3.8.5'
+    // EaseIMKit依赖，必须添加环信IM SDK
+    ////implementation project(path: ':hyphenatechatsdk')
+    implementation 'io.hyphenate:hyphenate-chat:3.8.5'
+    //EaseCallKit依赖，必须添加环信IM SDK
+    //api project(':ease-call-kit')
+    implementation 'io.hyphenate:ease-call-kit:3.8.5'
+
 }

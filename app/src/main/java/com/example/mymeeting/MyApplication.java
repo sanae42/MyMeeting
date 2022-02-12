@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
+import com.hyphenate.easeui.EaseIM;
 
 import org.litepal.LitePalApplication;
 
@@ -20,7 +21,7 @@ public class MyApplication  extends Application {
     // 上下文
     private Context mContext;
 
-    // 记录是否已经初始化
+    // （不采用）记录是否已经初始化
     private boolean isInit = false;
 
     @Override public void onCreate() {
@@ -33,8 +34,36 @@ public class MyApplication  extends Application {
         //LitePal初始化
         LitePalApplication.initialize(mContext);
 
-        // 初始化环信SDK
-        initEasemob();
+//        // 初始化环信SDK
+//        initEasemob();
+
+        EMOptions options = new EMOptions();
+        // 设置Appkey，如果配置文件已经配置，这里可以不用设置
+        // options.setAppKey("lzan13#hxsdkdemo");
+        // 设置自动登录
+        options.setAutoLogin(true);
+        // 设置是否需要发送已读回执
+        options.setRequireAck(true);
+        // 设置是否需要发送回执，
+        options.setRequireDeliveryAck(true);
+        // 设置是否根据服务器时间排序，默认是true
+        options.setSortMessageByServerTime(false);
+        // 收到好友申请是否自动同意，如果是自动同意就不会收到好友请求的回调，因为sdk会自动处理，默认为true
+        options.setAcceptInvitationAlways(true);
+        // 设置是否自动接收加群邀请，如果设置了当收到群邀请会自动同意加入
+        options.setAutoAcceptGroupInvitation(false);
+        // 设置（主动或被动）退出群组时，是否删除群聊聊天记录
+        options.setDeleteMessagesAsExitGroup(false);
+        // 设置是否允许聊天室的Owner 离开并删除聊天室的会话
+        options.allowChatroomOwnerLeave(true);
+
+        //EaseIM初始化
+        //EaseIMKit初始化已包含sdk初始化
+        if(EaseIM.getInstance().init(mContext, options)){
+            //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
+            EMClient.getInstance().setDebugMode(true);
+            //EaseIM初始化成功之后再去调用注册消息监听的代码 ...
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
 
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
@@ -63,6 +67,9 @@ public class MainActivity extends BaseActivity {
 
     //    搜索栏
     SearchView searchView;
+
+    // 环信登录进度条弹出框
+    private ProgressDialog mDialog;
 
     //    ViewPager及其适配器
     SectionsPagerAdapter sectionsPagerAdapter;
@@ -168,20 +175,19 @@ public class MainActivity extends BaseActivity {
                         startActivity(intent_calendar);
                         break;
                     case R.id.nav_note:
-                        if(BmobUser.isLogin()==true){
-                            Intent intent_note = new Intent();
-                            intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
-                            intent_note.putExtra("type","all");
-                            startActivity(intent_note);
-                        }else {
-                            Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
-                        }
+                        Intent intent_note = new Intent();
+                        intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
+                        intent_note.putExtra("type","all");
+                        startActivity(intent_note);
                         break;
                     case R.id.nav_chat:
                         if(BmobUser.isLogin()==true){
-                            Intent intent_chat = new Intent();
-                            intent_chat.setClass(getApplicationContext(), ChatActivity.class);
-                            startActivity(intent_chat);
+//                            Intent intent_note = new Intent();
+//                            intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
+//                            intent_note.putExtra("type","all");
+//                            startActivity(intent_note);
+                            //环信登录
+                            easeLogin();
                         }else {
                             Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
                         }
@@ -215,7 +221,11 @@ public class MainActivity extends BaseActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //bomb退出
                 BmobUser.logOut();
+                //环信退出
+                EMClient.getInstance().logout(true);
+
                 loggedLayout.setVisibility(View.GONE);
                 unloggedLayout.setVisibility(View.VISIBLE);
             }
@@ -269,6 +279,110 @@ public class MainActivity extends BaseActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
     }
+
+    /**
+     * 环信登录
+     */
+    private void easeLogin(){
+        mDialog = new ProgressDialog(this);
+        mDialog.setMessage("正在登陆，请稍后...");
+        mDialog.show();
+
+        String username = BmobUser.getCurrentUser().getUsername();
+        String password = BmobUser.getCurrentUser().getObjectId();
+
+        EMClient.getInstance().login(username, "1", new EMCallBack() {
+            /**
+             * 登陆成功的回调
+             */
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+
+//                        // 加载所有会话到内存
+//                        EMClient.getInstance().chatManager().loadAllConversations();
+//                        // 加载所有群组到内存，如果使用了群组的话
+//                        EMClient.getInstance().groupManager().loadAllGroups();
+
+                        // 登录成功跳转界面
+                        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                        startActivity(intent);
+                        mDialog.dismiss();
+                    }
+                });
+            }
+
+            /**
+             * 登陆错误的回调
+             * @param i
+             * @param s
+             */
+            @Override
+            public void onError(final int i, final String s) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDialog.dismiss();
+                        Log.d("lzan13", "登录失败 Error code:" + i + ", message:" + s);
+                        /**
+                         * 关于错误码可以参考官方api详细说明
+                         * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
+                         */
+                        switch (i) {
+                            // 网络异常 2
+                            case EMError.NETWORK_ERROR:
+                                Toast.makeText(getContext(), "网络错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无效的用户名 101
+                            case EMError.INVALID_USER_NAME:
+                                Toast.makeText(getContext(), "无效的用户名 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无效的密码 102
+                            case EMError.INVALID_PASSWORD:
+                                Toast.makeText(getContext(), "无效的密码 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 用户认证失败，用户名或密码错误 202
+                            case EMError.USER_AUTHENTICATION_FAILED:
+                                Toast.makeText(getContext(), "用户认证失败，用户名或密码错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 用户不存在 204
+                            case EMError.USER_NOT_FOUND:
+                                Toast.makeText(getContext(), "用户不存在 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无法访问到服务器 300
+                            case EMError.SERVER_NOT_REACHABLE:
+                                Toast.makeText(getContext(), "无法访问到服务器 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 等待服务器响应超时 301
+                            case EMError.SERVER_TIMEOUT:
+                                Toast.makeText(getContext(), "等待服务器响应超时 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 服务器繁忙 302
+                            case EMError.SERVER_BUSY:
+                                Toast.makeText(getContext(), "服务器繁忙 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 未知 Server 异常 303 一般断网会出现这个错误
+                            case EMError.SERVER_UNKNOWN_ERROR:
+                                Toast.makeText(getContext(), "未知的服务器异常 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                Toast.makeText(getContext(), "ml_sign_in_failed code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
+            }
+        });
+    }
+
 
     /**
      * （_User表中有attendingMeeting的获取会议数据函数）从服务器获取当前用户的attendingMeetingList，再调用getDataFromBombVersion2得到会议信息
