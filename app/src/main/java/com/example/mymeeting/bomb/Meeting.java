@@ -5,6 +5,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import java.util.Date;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobRelation;
 
 
@@ -14,6 +15,8 @@ public class Meeting extends BmobObject {
 //
     private String type; //会议类型
     private Number typeNumber;
+
+    private BmobFile picture;//图片文件
 //
     private BmobDate registrationDate; //注册时间
     private BmobDate hostDate; //举办时间
@@ -68,6 +71,10 @@ public class Meeting extends BmobObject {
 
     public void setRegistrationDate(BmobDate registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public void setPicture(BmobFile picture) {
+        this.picture = picture;
     }
 
     public void setLength(String length) {
@@ -164,6 +171,10 @@ public class Meeting extends BmobObject {
 
     public String getName() {
         return name;
+    }
+
+    public BmobFile getPicture() {
+        return picture;
     }
 
     public BmobDate getHostDate() {

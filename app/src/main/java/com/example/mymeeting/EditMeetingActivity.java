@@ -4,15 +4,29 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -28,6 +42,7 @@ import com.haibin.calendarview.CalendarView;
 
 import org.angmarch.views.NiceSpinner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,10 +50,12 @@ import java.util.Date;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 import static org.litepal.LitePalApplication.getContext;
 
@@ -69,6 +86,14 @@ public class EditMeetingActivity extends BaseActivity {
     FloatingActionButton saveFab;
     FloatingActionButton quickSaveFab; //
 
+    CardView pictureCardview;
+    Button uploadPictureButton;
+    ImageView picture;
+    String picturePath = "";
+
+    //系统相册活动
+    public static final int CHOOSE_PHOTO = 2;
+
     //加载进度条
     ProgressDialog progressDialog;
 
@@ -84,7 +109,8 @@ public class EditMeetingActivity extends BaseActivity {
         Intent intent = getIntent();
         editType = intent.getStringExtra("type");
         if(editType.equals("new")){
-
+            //TODO：图片选项未完成，暂不展示
+            pictureCardview.setVisibility(View.GONE);
         }
         else if(editType.equals("edit")){
             meetingToEdit = (meetingItem)intent.getSerializableExtra("meeting");
@@ -102,9 +128,9 @@ public class EditMeetingActivity extends BaseActivity {
             hostTimePicker.setMinute(meetingToEdit.getHostDate().getMinutes());
             hostTimePicker.setHour(meetingToEdit.getHostDate().getHours());
 
+            //编辑会议时不展示图片选项
+            pictureCardview.setVisibility(View.GONE);
         }
-//        meetingItem defaultMeetingItem = new meetingItem();
-//        meeting = (meetingItem)intent.getSerializableExtra("meeting_item");
 
 
 
@@ -144,6 +170,23 @@ public class EditMeetingActivity extends BaseActivity {
 //        Log.d(TAG, "日历选中："+hostTimeCalendar.getSelectedCalendar().getYear()+" "+hostTimeCalendar.getSelectedCalendar().getMonth()+" "+hostTimeCalendar.getSelectedCalendar().getDay());
         hostTimePicker = (TimePicker)findViewById(R.id.hostTimePicker);
 
+        //上传图片只在新建会议时允许进行
+        pictureCardview = (CardView)findViewById(R.id.upload_image_cardview);
+        uploadPictureButton = (Button) findViewById(R.id.choose_from_album);
+        picture = (ImageView) findViewById(R.id.picture);
+        uploadPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //如果没有授予相册权限，申请授权；授予则打开相册
+                if (ContextCompat.checkSelfPermission(EditMeetingActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(EditMeetingActivity.this, new String[]{ android.Manifest.permission. WRITE_EXTERNAL_STORAGE }, 1);
+                } else {
+                    openAlbum();
+                }
+            }
+        });
+
+
         //        悬浮按钮
         saveFab = (FloatingActionButton)findViewById(R.id.saveFab);
         quickSaveFab = (FloatingActionButton)findViewById(R.id.quickSaveFab); //
@@ -163,6 +206,112 @@ public class EditMeetingActivity extends BaseActivity {
             }
         });
 
+    }
+
+    /**
+     * 打开相册
+     */
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, CHOOSE_PHOTO); // 打开相册
+    }
+
+    /**
+     * 监听权限授予
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openAlbum();
+                } else {
+                    Toast.makeText(this, "你需要授予使用相册权限才能上传图片", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
+
+    /**
+     * 监听活动返回信息
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CHOOSE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    // 判断手机系统版本号
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        // 4.4及以上系统使用这个方法处理图片
+                        handleImageOnKitKat(data);
+                    } else {
+                        // 4.4以下系统使用这个方法处理图片
+//                        handleImageBeforeKitKat(data);
+                        Toast.makeText(this, "您的设备安卓版本过低", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 处理图片
+     */
+    @TargetApi(19)
+    private void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            // 如果是document类型的Uri，则通过document id处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1]; // 解析出数字格式的id
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是content类型的Uri，则使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是file类型的Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath); // 根据图片路径显示图片
+    }
+
+    /**
+     * 展示图片
+     */
+    private void displayImage(String imagePath) {
+        if (imagePath != null) {
+            picturePath = imagePath;
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            picture.setImageBitmap(bitmap);
+        } else {
+            Toast.makeText(this, "获取图片失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        // 通过Uri和selection来获取真实的图片路径
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
     }
 
     /**
@@ -222,55 +371,41 @@ public class EditMeetingActivity extends BaseActivity {
         showProgress();
 
         if(editType.equals("new")){
-            meeting.save(new SaveListener<String>() {
-                @Override
-                public void done(String objectId, BmobException e) {
-                    //TODO: ****_User表中有attendingMeeting的版本
-                    if(e==null){
-                        Log.d(TAG, "创建会议成功，返回objectId为："+objectId);
-                        Toast.makeText(getContext(), "创建会议成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
+            if(picturePath==null || picturePath.equals("")){
+                saveFunction(meeting);
+            }
+            else if (picturePath.length()>0){
+                BmobFile bmobFile = new BmobFile(new File(picturePath));
+                bmobFile.uploadblock(new UploadFileListener() {
+                    @Override
+                    public void done(BmobException e) {
+                        if(e==null){
+                            //bmobFile.getFileUrl()--返回的上传文件的完整地址
+                            Toast.makeText(getContext(), "上传图片成功", Toast.LENGTH_SHORT).show();
+                            //在meeting中插入上传成功的图片文件
+                            meeting.setPicture(bmobFile);
+                            saveFunction(meeting);
+                        }else{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d(TAG, "上传图片失败"+e.getMessage());
+                                    Toast.makeText(getContext(), "上传图片失败"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    //取消展示进度条
+                                    progressDialog.dismiss();
+                                }
+                            });
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                BmobRelation relation = new BmobRelation();
-                                Meeting m = new Meeting();
-                                m.setObjectId(objectId);
-                                relation.add(m);
-                                _User u = new _User();
-                                u.setObjectId(BmobUser.getCurrentUser().getObjectId());
-                                u.setAttendingMeeting(relation);
-                                u.update(new UpdateListener() {
-                                    @Override
-                                    public void done(BmobException e) {
-                                        if(e==null){
-                                            Log.d(TAG, "会议和当前用户参会绑定成功");
-                                            //返回主活动，刷新两个列表
-                                            Intent intent = new Intent();
-                                            setResult(RESULT_OK,intent);
-                                            finish();
-                                        }else{
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    //取消展示进度条
-                                                    progressDialog.dismiss();
-                                                }
-                                            });
-                                            Log.d(TAG, "会议和当前用户参会绑定失败"+e.getMessage());
-                                        }
-                                    }
-                                });
+                        }
 
-                            }
-                        });
-
-                    }else{
-                        Log.d(TAG, "创建会议失败：" + e.getMessage());
-                        Toast.makeText(getContext(), "创建会议失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
+
+                    @Override
+                    public void onProgress(Integer value) {
+                        // 返回的上传进度（百分比）
+                    }
+                });
+            }
         }
         else if(editType.equals("edit")){
             meeting.update(meetingToEdit.getObjectId(), new UpdateListener() {
@@ -317,6 +452,61 @@ public class EditMeetingActivity extends BaseActivity {
         }
 
 
+    }
+
+    /**
+     * saveMeeting调用的新建会议时的保存子方法
+     */
+    protected void saveFunction(Meeting meeting){
+        meeting.save(new SaveListener<String>() {
+            @Override
+            public void done(String objectId, BmobException e) {
+                //TODO: ****_User表中有attendingMeeting的版本
+                if(e==null){
+                    Log.d(TAG, "创建会议成功，返回objectId为："+objectId);
+                    Toast.makeText(getContext(), "创建会议成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BmobRelation relation = new BmobRelation();
+                            Meeting m = new Meeting();
+                            m.setObjectId(objectId);
+                            relation.add(m);
+                            _User u = new _User();
+                            u.setObjectId(BmobUser.getCurrentUser().getObjectId());
+                            u.setAttendingMeeting(relation);
+                            u.update(new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    if(e==null){
+                                        Log.d(TAG, "会议和当前用户参会绑定成功");
+                                        //返回主活动，刷新两个列表
+                                        Intent intent = new Intent();
+                                        setResult(RESULT_OK,intent);
+                                        finish();
+                                    }else{
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //取消展示进度条
+                                                progressDialog.dismiss();
+                                            }
+                                        });
+                                        Log.d(TAG, "会议和当前用户参会绑定失败"+e.getMessage());
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+
+                }else{
+                    Log.d(TAG, "创建会议失败：" + e.getMessage());
+                    Toast.makeText(getContext(), "创建会议失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
