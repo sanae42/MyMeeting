@@ -169,17 +169,6 @@ public class MainActivity extends BaseActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
 
                 switch (item.getItemId()){
-                    case R.id.nav_calendar:
-                        Intent intent_calendar = new Intent();
-                        intent_calendar.setClass(getApplicationContext(), CalendarActivity.class);
-                        startActivity(intent_calendar);
-                        break;
-                    case R.id.nav_note:
-                        Intent intent_note = new Intent();
-                        intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
-                        intent_note.putExtra("type","all");
-                        startActivity(intent_note);
-                        break;
                     case R.id.nav_chat:
                         if(BmobUser.isLogin()==true){
                             if (EMClient.getInstance().isLoggedInBefore()) {
@@ -193,6 +182,17 @@ public class MainActivity extends BaseActivity {
                         }else {
                             Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
                         }
+                        break;
+                    case R.id.nav_calendar:
+                        Intent intent_calendar = new Intent();
+                        intent_calendar.setClass(getApplicationContext(), CalendarActivity.class);
+                        startActivity(intent_calendar);
+                        break;
+                    case R.id.nav_note:
+                        Intent intent_note = new Intent();
+                        intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
+                        intent_note.putExtra("type","all");
+                        startActivity(intent_note);
                         break;
                     default:
                         break;
