@@ -182,12 +182,14 @@ public class MainActivity extends BaseActivity {
                         break;
                     case R.id.nav_chat:
                         if(BmobUser.isLogin()==true){
-//                            Intent intent_note = new Intent();
-//                            intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
-//                            intent_note.putExtra("type","all");
-//                            startActivity(intent_note);
-                            //环信登录
-                            easeLogin();
+                            if (EMClient.getInstance().isLoggedInBefore()) {
+                                // 如果已经登录跳转界面
+                                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                                startActivity(intent);
+                            }else {
+                                // 如果未登录进行登录
+                                easeLogin();
+                            }
                         }else {
                             Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
                         }
@@ -223,8 +225,40 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 //bomb退出
                 BmobUser.logOut();
-                //环信退出
+                //环信退出（同步/异步）
                 EMClient.getInstance().logout(true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        EMClient.getInstance().logout(true, new EMCallBack() {
+                            @Override
+                            public void onSuccess() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getContext(), "环信异步退出成功", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onProgress(int progress, String status) {
+
+                            }
+
+                            @Override
+                            public void onError(int code, String message) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getContext(), "环信异步退出成功", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+                }).start();
 
                 loggedLayout.setVisibility(View.GONE);
                 unloggedLayout.setVisibility(View.VISIBLE);

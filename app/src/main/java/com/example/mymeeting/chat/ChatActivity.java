@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mymeeting.R;
 import com.example.mymeeting.activityCollector.BaseActivity;
@@ -24,18 +25,24 @@ import com.example.mymeeting.note.AllNoteListAdapter;
 import com.example.mymeeting.note.EditNoteActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.huawei.multimedia.audiokit.utils.Constant;
 import com.hyphenate.EMCallBack;
+import com.hyphenate.EMConnectionListener;
+import com.hyphenate.EMError;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.interfaces.OnItemClickListener;
 import com.hyphenate.easeui.modules.contact.EaseContactListFragment;
 import com.hyphenate.easeui.modules.conversation.EaseConversationListFragment;
+import com.hyphenate.util.EMLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
+
+import static org.litepal.LitePalApplication.getContext;
 
 public class ChatActivity extends BaseActivity {
 
@@ -61,38 +68,11 @@ public class ChatActivity extends BaseActivity {
 
         // 加载所有会话到内存
         EMClient.getInstance().chatManager().loadAllConversations();
-        // 加载所有群组到内存，如果使用了群组的话
+        // 加载所有群组到内存
         EMClient.getInstance().groupManager().loadAllGroups();
 
-        String toChatUsername = "";
-        if(BmobUser.getCurrentUser().getUsername().equals("18301038"))
-        {
-            toChatUsername = "1";
-        }else if(BmobUser.getCurrentUser().getUsername().equals("1")){
-            toChatUsername = "18301038";
-        }
-        //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
-        EMMessage message = EMMessage.createTxtSendMessage("你好呀", toChatUsername);
-
-        message.setMessageStatusCallback(new EMCallBack(){
-
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "消息发送成功");
-            }
-
-            @Override
-            public void onError(int code, String error) {
-
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-        });
-        message.setChatType(EMMessage.ChatType.Chat);
-        EMClient.getInstance().chatManager().sendMessage(message);
+        //注册一个监听连接状态的listener
+        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
 
         msgListener = new EMMessageListener() {
 
@@ -142,15 +122,12 @@ public class ChatActivity extends BaseActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_message:
-//                    navController.navigate(R.id.action_indoorMapFragment_to_outdoorMapFragment);
                     mViewPager.setCurrentItem(0);
                     return true;
                 case R.id.navigation_friend:
-//                    navController.navigate(R.id.action_outdoorMapFragment_to_indoorMapFragment);
                     mViewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_other:
-//                    navController.navigate(R.id.action_outdoorMapFragment_to_indoorMapFragment);
                     mViewPager.setCurrentItem(2);
                     return true;
             }
@@ -201,10 +178,10 @@ public class ChatActivity extends BaseActivity {
         //底部导航栏有几项就有几个Fragment
         final ArrayList<Fragment> fgLists=new ArrayList<>(3);
         MyConversationListFragment myConversationListFragment = new MyConversationListFragment();
-        EaseContactListFragment easeContactListFragment = new EaseContactListFragment();
+        MyContactListFragment myContactListFragment = new MyContactListFragment();
 
         fgLists.add(myConversationListFragment);
-        fgLists.add(easeContactListFragment);
+        fgLists.add(myContactListFragment);
         fgLists.add(new IndoorMapFragment());
 //        fgLists.add(new MyFragment());
 
@@ -239,4 +216,34 @@ public class ChatActivity extends BaseActivity {
         }
         return true;
     }
+
+    //实现ConnectionListener接口
+    private class MyConnectionListener implements EMConnectionListener {
+        @Override
+        public void onConnected() {
+        }
+        @Override
+        public void onDisconnected(int error) {
+            EMLog.d("global listener", "onDisconnect" + error);
+            if (error == EMError.USER_REMOVED) {
+                Toast.makeText(getContext(), "USER_REMOVED", Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                Toast.makeText(getContext(), "USER_LOGIN_ANOTHER_DEVICE", Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (error == EMError.SERVER_SERVICE_RESTRICTED) {
+                Toast.makeText(getContext(), "SERVER_SERVICE_RESTRICTED", Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (error == EMError.USER_KICKED_BY_CHANGE_PASSWORD) {
+                Toast.makeText(getContext(), "USER_KICKED_BY_CHANGE_PASSWORD", Toast.LENGTH_SHORT).show();
+                finish();
+            } else if (error == EMError.USER_KICKED_BY_OTHER_DEVICE) {
+                Toast.makeText(getContext(), "USER_KICKED_BY_OTHER_DEVICE", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+
+
 }
