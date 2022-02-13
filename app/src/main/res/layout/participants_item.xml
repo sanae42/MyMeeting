@@ -11,11 +11,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="3dp"
         >
-
-
-
-
 
             <TextView
                 android:id="@+id/objectId"
@@ -36,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
                 android:gravity="left"
                 android:layout_margin="5dp"
                 android:textSize="14sp" />

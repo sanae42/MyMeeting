@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mymeeting.R;
 import com.example.mymeeting.bomb._User;
+import com.example.mymeeting.note.AllNoteListAdapter;
 
 import java.util.List;
 
@@ -26,6 +27,40 @@ public class AllParticipantsListAdapter extends RecyclerView.Adapter<AllParticip
     public AllParticipantsListAdapter(List<_User> allParticipantsList) {
         mAllParticipantsList = allParticipantsList;
     }
+
+    //***************************************************
+    //自定义recyclerView的项目监听器
+    private AllParticipantsListAdapter.OnClickListener onClickListener;//接口对象
+
+    public AllParticipantsListAdapter.OnClickListener getOnClickListener() {
+        return onClickListener;
+    }
+
+    public void setOnClickListener(AllParticipantsListAdapter.OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+    /**
+     * 定义点击事件回调接口.
+     */
+    public interface OnClickListener {
+        /**
+         * 点击事件.
+         */
+        void onClick(View itemView, int position);
+
+        /**
+         * 长点击事件.
+         */
+        void onLongClick(View itemView, int position);
+
+//        /**
+//         * 选项改变事件.
+//         */
+//        void onCheckedChange(View itemView, int position, boolean isChecked);
+    }
+
+
+    //***************************************************
 
     @NonNull
     @Override
@@ -78,6 +113,26 @@ public class AllParticipantsListAdapter extends RecyclerView.Adapter<AllParticip
             objectId = (TextView) view.findViewById(R.id.objectId);
             name = (TextView) view.findViewById(R.id.name);
             nick = (TextView) view.findViewById(R.id.nick);
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 设置单击事件并回调给页面
+                    if (onClickListener != null) {
+                        onClickListener.onClick(itemView,getLayoutPosition());
+                    }
+                }
+            });
+            cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onClickListener != null) {
+                        onClickListener.onLongClick(itemView,getLayoutPosition());
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
     }
 }
