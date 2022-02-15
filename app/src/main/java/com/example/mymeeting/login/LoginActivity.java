@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,9 @@ import com.example.mymeeting.R;
 import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb._User;
 import com.google.android.material.snackbar.Snackbar;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
@@ -87,8 +91,17 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+
     /**
-     * 注册调用
+     * 判断密码是否只含字母数字
+     */
+    public boolean isLetterDigit(String str) {
+        String regex = "^[a-z0-9A-Z]+$";
+        return str.matches(regex);
+    }
+
+    /**
+     * 环信注册调用，环信注册成功后则调用bombSignup注册bomb
      */
     public void signup(){
         String username = Username.getText().toString();
@@ -97,8 +110,81 @@ public class LoginActivity extends BaseActivity {
             Toast.makeText(getContext(), "用户名或密码为空，请重新输入", Toast.LENGTH_SHORT).show();
             return;
         }
+        if(isLetterDigit(username)==false){
+            Toast.makeText(getContext(), "用户名不符合规范 用户名应该由字母和数字组成", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        //展示进度条
         showProgress();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    //环信注册密码是“1”
+                    EMClient.getInstance().createAccount(username, "1");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //环信注册成功，调用bombSignup注册bomb
+                            bombSignup();
+                        }
+                    });
+                } catch (final HyphenateException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            /**
+                             * 关于错误码可以参考环信官方api详细说明
+                             * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
+                             */
+                            int errorCode = e.getErrorCode();
+                            String message = e.getMessage();
+                            switch (errorCode) {
+                                // 网络错误
+                                case EMError.NETWORK_ERROR:
+                                    Toast.makeText(getContext(), "网络错误 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 用户已存在
+                                case EMError.USER_ALREADY_EXIST:
+                                    Toast.makeText(getContext(), "用户已存在 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 参数不合法，一般情况是username 使用了uuid导致，不能使用uuid注册
+                                case EMError.USER_ILLEGAL_ARGUMENT:
+                                    Toast.makeText(getContext(), "参数不合法，一般情况是username 使用了uuid导致，不能使用uuid注册 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 服务器未知错误
+                                case EMError.SERVER_UNKNOWN_ERROR:
+                                    Toast.makeText(getContext(), "服务器未知错误 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
+                                    break;
+                                case EMError.USER_REG_FAILED:
+                                    Toast.makeText(getContext(), "账户注册失败 code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
+                                    break;
+                                default:
+                                    Toast.makeText(getContext(), "ml_sign_up_failed code: " + errorCode + ", message:" + message, Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+    /**
+     * bomb注册调用
+     */
+    public void bombSignup(){
+        String username = Username.getText().toString();
+        String password = Password.getText().toString();
+
         new Thread(){
             @Override
             public void run() {
@@ -115,7 +201,7 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     progressDialog.dismiss();
-                                    Toast.makeText(getContext(), "注册成功", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "bomb注册成功", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent();
                                     intent.putExtra("login",true);
                                     setResult(RESULT_OK,intent);
@@ -127,10 +213,7 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     progressDialog.dismiss();
-                                    Toast.makeText(getContext(), "注册失败 "+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent();
-                                    intent.putExtra("login",false);
-                                    setResult(RESULT_OK,intent);
+                                    Toast.makeText(getContext(), "bomb注册失败 "+ e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

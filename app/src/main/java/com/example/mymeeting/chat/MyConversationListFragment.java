@@ -1,12 +1,16 @@
 package com.example.mymeeting.chat;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +35,10 @@ public class MyConversationListFragment extends EaseConversationListFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Resources r =mContext.getResources();
+        Uri uri =  Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                + r.getResourcePackageName(R.mipmap.user_icon) );
+
         //设置头像尺寸
         conversationListLayout.setAvatarSize(EaseCommonUtils.dip2px(mContext, 50));
         //设置是否隐藏未读消息数，默认为不隐藏
@@ -40,6 +48,9 @@ public class MyConversationListFragment extends EaseConversationListFragment {
         //设置用户默认头像
         conversationListLayout.setAvatarDefaultSrc(getResources().getDrawable(R.mipmap.user_icon));
 
+
+
+
         EaseIM.getInstance().setUserProvider(new EaseUserProfileProvider() {
             @Override
             public EaseUser getUser(String username) {
@@ -47,7 +58,7 @@ public class MyConversationListFragment extends EaseConversationListFragment {
 //                //设置用户昵称
 //                user.setNickname("测试昵称");
 //                //设置头像地址
-//                user.setAvatar();
+                user.setAvatar(uri.toString());
 
                 return user;
             }
