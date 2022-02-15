@@ -57,6 +57,8 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //注销监听
+        EMClient.getInstance().chatManager().removeMessageListener(msgListener);
         //环信退出
         EMClient.getInstance().logout(true);
     }
@@ -109,7 +111,6 @@ public class ChatActivity extends BaseActivity {
             }
         };
         EMClient.getInstance().chatManager().addMessageListener(msgListener);
-
 
         initiateView();
     }

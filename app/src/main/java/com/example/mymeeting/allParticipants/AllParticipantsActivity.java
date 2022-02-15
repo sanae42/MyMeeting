@@ -218,7 +218,6 @@ public class AllParticipantsActivity extends BaseActivity {
                     @Override
                     public void run() {
                         mDialog.dismiss();
-                        Log.d("lzan13", "登录失败 Error code:" + i + ", message:" + s);
                         /**
                          * 关于错误码可以参考官方api详细说明
                          * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html

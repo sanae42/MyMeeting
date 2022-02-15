@@ -32,13 +32,23 @@ import android.widget.Toast;
 
 import com.example.mymeeting.activityCollector.ActivityCollector;
 import com.example.mymeeting.activityCollector.BaseActivity;
+import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
+import com.example.mymeeting.chat.ConversationActivity;
 import com.example.mymeeting.db.meetingItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.haibin.calendarview.CalendarView;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMGroup;
+import com.hyphenate.chat.EMGroupManager;
+import com.hyphenate.chat.EMGroupOptions;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.exceptions.HyphenateException;
 
 import org.angmarch.views.NiceSpinner;
 
@@ -46,6 +56,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
@@ -481,6 +492,15 @@ public class EditMeetingActivity extends BaseActivity {
                                 public void done(BmobException e) {
                                     if(e==null){
                                         Log.d(TAG, "会议和当前用户参会绑定成功");
+
+                                        //新建环信群组
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                newGroup(objectId);
+                                            }
+                                        }).start();
+
                                         //返回主活动，刷新两个列表
                                         Intent intent = new Intent();
                                         setResult(RESULT_OK,intent);
@@ -507,6 +527,155 @@ public class EditMeetingActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    /**
+     * 新建环信群
+     */
+    //TODO：方法逻辑需要进一步精简
+    private void newGroup(String objectId){
+        String username = BmobUser.getCurrentUser().getUsername();
+        String password = "1";
+        //已经登录
+        if (EMClient.getInstance().isLoggedInBefore()){
+            //开始创建群组
+            EMGroupOptions option = new EMGroupOptions();
+            option.maxUsers = 99;
+            option.style = EMGroupManager.EMGroupStyle.EMGroupStylePublicOpenJoin;
+            String groupName = objectId;
+            String desc = "";
+            String[] allMembers = new String[]{};
+            String reason = "";
+            try {
+                EMClient.getInstance().groupManager().createGroup(groupName, desc, allMembers, reason, option);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //会议创建成功
+                        Toast.makeText(getContext(), "会议群组创建成功" , Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (HyphenateException e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //会议创建失败
+                        int errorCode = e.getErrorCode();
+                        String message = e.getMessage();
+                        Toast.makeText(getContext(), "会议群组创建失败" +errorCode+" "+message, Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "群组创建失败: "+errorCode+" "+message);
+                    }
+                });
+            }
+        }else {
+            //没有登录，开始登录
+            EMClient.getInstance().login(username, password, new EMCallBack() {
+                /**
+                 * 登陆成功的回调
+                 */
+                @Override
+                public void onSuccess() {
+                    //开始创建群组
+                    EMGroupOptions option = new EMGroupOptions();
+                    option.maxUsers = 99;
+                    option.style = EMGroupManager.EMGroupStyle.EMGroupStylePublicOpenJoin;
+                    String groupName = objectId;
+                    String desc = "";
+                    String[] allMembers = new String[]{};
+                    String reason = "";
+                    try {
+
+                        EMGroup group = EMClient.getInstance().groupManager().createGroup(groupName, desc, allMembers, reason, option);
+                        group.getGroupId()
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //会议创建成功
+                                Toast.makeText(getContext(), "会议群组创建成功" , Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (HyphenateException e) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //会议创建失败
+                                int errorCode = e.getErrorCode();
+                                String message = e.getMessage();
+                                Toast.makeText(getContext(), "会议群组创建失败" +errorCode+" "+message, Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "群组创建失败: "+errorCode+" "+message);
+                            }
+                        });
+                    }
+                }
+
+                /**
+                 * 登陆错误的回调
+                 * @param i
+                 * @param s
+                 */
+                @Override
+                public void onError(final int i, final String s) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            /**
+                             * 关于错误码可以参考官方api详细说明
+                             * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
+                             */
+                            switch (i) {
+                                // 网络异常 2
+                                case EMError.NETWORK_ERROR:
+                                    Toast.makeText(getContext(), "网络错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 无效的用户名 101
+                                case EMError.INVALID_USER_NAME:
+                                    Toast.makeText(getContext(), "无效的用户名 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 无效的密码 102
+                                case EMError.INVALID_PASSWORD:
+                                    Toast.makeText(getContext(), "无效的密码 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 用户认证失败，用户名或密码错误 202
+                                case EMError.USER_AUTHENTICATION_FAILED:
+                                    Toast.makeText(getContext(), "用户认证失败，用户名或密码错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 用户不存在 204
+                                case EMError.USER_NOT_FOUND:
+                                    Toast.makeText(getContext(), "用户不存在 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 无法访问到服务器 300
+                                case EMError.SERVER_NOT_REACHABLE:
+                                    Toast.makeText(getContext(), "无法访问到服务器 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 等待服务器响应超时 301
+                                case EMError.SERVER_TIMEOUT:
+                                    Toast.makeText(getContext(), "等待服务器响应超时 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 服务器繁忙 302
+                                case EMError.SERVER_BUSY:
+                                    Toast.makeText(getContext(), "服务器繁忙 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 未知 Server 异常 303 一般断网会出现这个错误
+                                case EMError.SERVER_UNKNOWN_ERROR:
+                                    Toast.makeText(getContext(), "未知的服务器异常 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                default:
+                                    Toast.makeText(getContext(), "ml_sign_in_failed code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onProgress(int i, String s) {
+
+                }
+            });
+        }
+
     }
 
     /**
