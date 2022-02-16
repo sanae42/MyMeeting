@@ -191,8 +191,6 @@ public class AllParticipantsActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mDialog.dismiss();
-
                         // 登录成功跳转界面
                         // 跳转到聊天界面，开始聊天
                         Intent intent = new Intent(AllParticipantsActivity.this, ConversationActivity.class);

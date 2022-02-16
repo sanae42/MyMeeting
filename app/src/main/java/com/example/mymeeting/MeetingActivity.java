@@ -23,6 +23,7 @@ import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
+import com.example.mymeeting.chat.ConversationActivity;
 import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.group.MeetingGroupActivity;
 import com.example.mymeeting.map.MapActivity;
@@ -30,6 +31,10 @@ import com.example.mymeeting.note.AllNoteActivity;
 import com.example.mymeeting.sign.MeetingSignActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
@@ -150,9 +155,9 @@ public class MeetingActivity extends BaseActivity {
             }
         });
 
-        //会议功能之———会议群组/布告板
-        LinearLayout meetingGroup = (LinearLayout)findViewById(R.id.meeting_group);
-        meetingGroup.setOnClickListener(new View.OnClickListener() {
+        //会议功能之———会议布告板
+        LinearLayout meetingNotification = (LinearLayout)findViewById(R.id.meeting_notification);
+        meetingNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -197,6 +202,17 @@ public class MeetingActivity extends BaseActivity {
             }
         });
 
+        //会议功能之———会议群组
+        LinearLayout meetingGroup = (LinearLayout)findViewById(R.id.meeting_group);
+        meetingGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //展示进度条
+                showProgress();
+                easeLoginThenGotoGroup();
+            }
+        });
+
         //会议功能之———编辑会议
         LinearLayout editThisMeeting = (LinearLayout)findViewById(R.id.edit_this_meeting);
         editThisMeeting.setOnClickListener(new View.OnClickListener() {
@@ -221,6 +237,122 @@ public class MeetingActivity extends BaseActivity {
         });
 
     }
+
+    /**
+     * 登录环信并创建会议,调用newGroup(objectId)
+     */
+    private void easeLoginThenGotoGroup(){
+        String username = BmobUser.getCurrentUser().getUsername();
+        String password = "1";
+        //已经登录
+        if (EMClient.getInstance().isLoggedInBefore()){
+            //进入群聊
+            gotoGroup();
+        }else {
+            //没有登录，开始登录
+            EMClient.getInstance().login(username, password, new EMCallBack() {
+                /**
+                 * 登陆成功的回调
+                 */
+                @Override
+                public void onSuccess() {
+                    //进入群聊
+                    gotoGroup();
+                }
+
+                /**
+                 * 登陆错误的回调
+                 * @param i
+                 * @param s
+                 */
+                @Override
+                public void onError(final int i, final String s) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //取消展示进度条
+                            progressDialog.dismiss();
+                            /**
+                             * 关于错误码可以参考官方api详细说明
+                             * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
+                             */
+                            switch (i) {
+                                // 网络异常 2
+                                case EMError.NETWORK_ERROR:
+                                    Toast.makeText(getContext(), "网络错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 无效的用户名 101
+                                case EMError.INVALID_USER_NAME:
+                                    Toast.makeText(getContext(), "无效的用户名 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 无效的密码 102
+                                case EMError.INVALID_PASSWORD:
+                                    Toast.makeText(getContext(), "无效的密码 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 用户认证失败，用户名或密码错误 202
+                                case EMError.USER_AUTHENTICATION_FAILED:
+                                    Toast.makeText(getContext(), "用户认证失败，用户名或密码错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 用户不存在 204
+                                case EMError.USER_NOT_FOUND:
+                                    Toast.makeText(getContext(), "用户不存在 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 无法访问到服务器 300
+                                case EMError.SERVER_NOT_REACHABLE:
+                                    Toast.makeText(getContext(), "无法访问到服务器 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 等待服务器响应超时 301
+                                case EMError.SERVER_TIMEOUT:
+                                    Toast.makeText(getContext(), "等待服务器响应超时 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 服务器繁忙 302
+                                case EMError.SERVER_BUSY:
+                                    Toast.makeText(getContext(), "服务器繁忙 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                // 未知 Server 异常 303 一般断网会出现这个错误
+                                case EMError.SERVER_UNKNOWN_ERROR:
+                                    Toast.makeText(getContext(), "未知的服务器异常 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                                default:
+                                    Toast.makeText(getContext(), "ml_sign_in_failed code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onProgress(int i, String s) {
+
+                }
+            });
+        }
+    }
+
+    /**
+     * 进入群聊
+     */
+    private void gotoGroup(){
+        //取消展示进度条
+        progressDialog.dismiss();
+
+        String groupId = meeting.getGroupId();
+        if(groupId==null || groupId.equals("")){
+            Toast.makeText(getContext(), "因为某些原因会议群组未成功创建", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // 跳转到聊天界面，开始聊天
+        Intent intent = new Intent(MeetingActivity.this, ConversationActivity.class);
+        // EaseUI封装的聊天界面需要这两个参数，聊天者的username，以及聊天类型，单聊还是群聊
+        intent.putExtra("conversationId", groupId);
+        intent.putExtra("chatType", EMMessage.ChatType.GroupChat);
+        //优先漫游
+        intent.putExtra("isRoaming", true);
+        startActivity(intent);
+    }
+
+
 
     /**
      * 删除会议

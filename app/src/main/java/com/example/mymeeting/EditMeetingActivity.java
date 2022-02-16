@@ -497,7 +497,7 @@ public class EditMeetingActivity extends BaseActivity {
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                newGroup(objectId);
+                                                easeLoginThenNewGroup(objectId);
                                             }
                                         }).start();
 
@@ -530,44 +530,15 @@ public class EditMeetingActivity extends BaseActivity {
     }
 
     /**
-     * 新建环信群
+     * 登录环信并创建会议,调用newGroup(objectId)
      */
-    //TODO：方法逻辑需要进一步精简
-    private void newGroup(String objectId){
+    private void easeLoginThenNewGroup(String objectId){
         String username = BmobUser.getCurrentUser().getUsername();
         String password = "1";
         //已经登录
         if (EMClient.getInstance().isLoggedInBefore()){
             //开始创建群组
-            EMGroupOptions option = new EMGroupOptions();
-            option.maxUsers = 99;
-            option.style = EMGroupManager.EMGroupStyle.EMGroupStylePublicOpenJoin;
-            String groupName = objectId;
-            String desc = "";
-            String[] allMembers = new String[]{};
-            String reason = "";
-            try {
-                EMClient.getInstance().groupManager().createGroup(groupName, desc, allMembers, reason, option);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //会议创建成功
-                        Toast.makeText(getContext(), "会议群组创建成功" , Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } catch (HyphenateException e) {
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //会议创建失败
-                        int errorCode = e.getErrorCode();
-                        String message = e.getMessage();
-                        Toast.makeText(getContext(), "会议群组创建失败" +errorCode+" "+message, Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "群组创建失败: "+errorCode+" "+message);
-                    }
-                });
-            }
+            newGroup(objectId);
         }else {
             //没有登录，开始登录
             EMClient.getInstance().login(username, password, new EMCallBack() {
@@ -577,37 +548,7 @@ public class EditMeetingActivity extends BaseActivity {
                 @Override
                 public void onSuccess() {
                     //开始创建群组
-                    EMGroupOptions option = new EMGroupOptions();
-                    option.maxUsers = 99;
-                    option.style = EMGroupManager.EMGroupStyle.EMGroupStylePublicOpenJoin;
-                    String groupName = objectId;
-                    String desc = "";
-                    String[] allMembers = new String[]{};
-                    String reason = "";
-                    try {
-
-                        EMGroup group = EMClient.getInstance().groupManager().createGroup(groupName, desc, allMembers, reason, option);
-                        group.getGroupId()
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //会议创建成功
-                                Toast.makeText(getContext(), "会议群组创建成功" , Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } catch (HyphenateException e) {
-                        e.printStackTrace();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //会议创建失败
-                                int errorCode = e.getErrorCode();
-                                String message = e.getMessage();
-                                Toast.makeText(getContext(), "会议群组创建失败" +errorCode+" "+message, Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, "群组创建失败: "+errorCode+" "+message);
-                            }
-                        });
-                    }
+                    newGroup(objectId);
                 }
 
                 /**
@@ -675,6 +616,59 @@ public class EditMeetingActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    /**
+     * 新建环信群
+     */
+    private void newGroup(String objectId){
+        EMGroupOptions option = new EMGroupOptions();
+        option.maxUsers = 99;
+        option.style = EMGroupManager.EMGroupStyle.EMGroupStylePublicOpenJoin;
+        String groupName = objectId;
+        String desc = "";
+        String[] allMembers = new String[]{};
+        String reason = "";
+        try {
+
+            EMGroup group = EMClient.getInstance().groupManager().createGroup(groupName, desc, allMembers, reason, option);
+            String groupId = group.getGroupId();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //会议创建成功
+                    Toast.makeText(getContext(), "会议群组创建成功" , Toast.LENGTH_SHORT).show();
+                    Meeting m = new Meeting();
+                    m.setGroupId(groupId);
+                    m.update(objectId, new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                Log.d(TAG, "会议和群组绑定成功");
+                                Toast.makeText(getContext(), "会议和群组绑定成功" , Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.d(TAG, "会议和群组绑定失败"+e.getMessage());
+                                Toast.makeText(getContext(), "会议和群组绑定失败"+e.getMessage() , Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            });
+        } catch (HyphenateException e) {
+            e.printStackTrace();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //会议创建失败
+                    int errorCode = e.getErrorCode();
+                    String message = e.getMessage();
+                    Toast.makeText(getContext(), "会议群组创建失败" +errorCode+" "+message, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "群组创建失败: "+errorCode+" "+message);
+                }
+            });
+        }
+
+
 
     }
 

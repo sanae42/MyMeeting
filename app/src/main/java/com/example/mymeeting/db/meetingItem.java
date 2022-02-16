@@ -35,6 +35,8 @@ public class meetingItem  extends LitePalSupport implements Serializable {
 
     private int imageId; //图片id
 
+    private String groupId;//环信群组id
+
     private String organizer;//举办方（不一定是申请人）
 
 
@@ -63,6 +65,14 @@ public class meetingItem  extends LitePalSupport implements Serializable {
 
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setBomb_id(int bomb_id) {
+        this.bomb_id = bomb_id;
     }
 
     public void setLength(String length) {
@@ -159,6 +169,14 @@ public class meetingItem  extends LitePalSupport implements Serializable {
 
     public String getLocation() {
         return location;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public int getBomb_id() {
+        return bomb_id;
     }
 
     public String getName() {

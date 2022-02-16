@@ -36,6 +36,7 @@ public class Meeting extends BmobObject {
 
     private String organizer;//举办方（不一定是申请人）
 
+    private String groupId;//环信群组id
 
     private _User originator; //发起人，一对一关系
 
@@ -51,6 +52,10 @@ public class Meeting extends BmobObject {
 
     public void setSigninParticipant(BmobRelation signinParticipant) {
         this.signinParticipant = signinParticipant;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public void setId(Number id) {
@@ -175,6 +180,10 @@ public class Meeting extends BmobObject {
 
     public BmobFile getPicture() {
         return picture;
+    }
+
+    public String getGroupId() {
+        return groupId;
     }
 
     public BmobDate getHostDate() {

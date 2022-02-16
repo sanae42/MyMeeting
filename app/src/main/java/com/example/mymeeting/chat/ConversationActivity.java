@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.mymeeting.R;
+import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.modules.chat.EaseChatFragment;
 import com.hyphenate.easeui.widget.EaseTitleBar;
 
@@ -24,7 +25,12 @@ public class ConversationActivity extends AppCompatActivity {
         //设置右侧菜单图标
         titleBarMessage.setRightImageResource(R.drawable.chat_user_info);
         //设置标题
-        titleBarMessage.setTitle("和用户"+getIntent().getExtras().get("conversationId").toString()+"的聊天");
+        if(getIntent().getExtras().get("chatType").equals(EMMessage.ChatType.Chat)){
+            titleBarMessage.setTitle("和用户"+getIntent().getExtras().get("conversationId").toString()+"的聊天");
+        }else if(getIntent().getExtras().get("chatType").equals(EMMessage.ChatType.GroupChat)){
+            titleBarMessage.setTitle("");
+        }
+
 //        //设置标题位置
 //        titleBarMessage.setTitlePosition(EaseTitleBar.TitlePosition.Left);
         //设置右侧菜单图标的点击事件

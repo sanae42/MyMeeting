@@ -510,7 +510,7 @@ public class MainActivity extends BaseActivity {
                                 m.setComtent(meeting.getComtent());
                                 m.setImageId(R.drawable.flower); //
                                 m.setOrganizer(meeting.getOrganizer());
-
+                                m.setGroupId(meeting.getGroupId());
 
                                 //TODO：设置是否申请和是否参会
                                 //未登录时默认都为false
