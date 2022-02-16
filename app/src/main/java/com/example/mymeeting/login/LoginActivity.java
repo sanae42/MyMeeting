@@ -110,8 +110,10 @@ public class LoginActivity extends BaseActivity {
             Toast.makeText(getContext(), "用户名或密码为空，请重新输入", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(isLetterDigit(username)==false){
-            Toast.makeText(getContext(), "用户名不符合规范 用户名应该由字母和数字组成", Toast.LENGTH_SHORT).show();
+        //用户名必须长度小于15，为了与环信的群组id相区别，
+        // 因为当前((EMConversation)item).isGroup()和((EMConversation)item).getType()都不能判断一个会话是群组还是私聊，因此只能用id长度判断
+        if(isLetterDigit(username)==false || username.length()>=15){
+            Toast.makeText(getContext(), "用户名不符合规范 用户名应该由长度小于15的字母和数字序列组成", Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -196,7 +196,9 @@ public class AllParticipantsActivity extends BaseActivity {
                         Intent intent = new Intent(AllParticipantsActivity.this, ConversationActivity.class);
                         // EaseUI封装的聊天界面需要这两个参数，聊天者的username，以及聊天类型，单聊还是群聊
                         intent.putExtra("conversationId", userId);
-                        intent.putExtra("chatType", EMMessage.ChatType.Chat);
+                        //“chatType”——聊天类型，整型，分别为单聊（1）、群聊（2）和聊天室（3）；
+                        //TODO:不可以使用EMMessage.ChatType.xxx，否则会出群聊不能看到其他用户消息的问题
+                        intent.putExtra("chatType", 1);
                         //优先漫游
                         intent.putExtra("isRoaming", true);
                         startActivity(intent);

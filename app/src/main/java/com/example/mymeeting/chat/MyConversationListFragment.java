@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import com.hyphenate.easeui.modules.conversation.EaseConversationListFragment;
 import com.hyphenate.easeui.modules.conversation.model.EaseConversationSetStyle;
 import com.hyphenate.easeui.provider.EaseUserProfileProvider;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
+
+import static org.litepal.LitePalApplication.getContext;
 
 
 public class MyConversationListFragment extends EaseConversationListFragment {
@@ -58,7 +61,7 @@ public class MyConversationListFragment extends EaseConversationListFragment {
 //                //设置用户昵称
 //                user.setNickname("测试昵称");
 //                //设置头像地址
-                user.setAvatar(uri.toString());
+//                user.setAvatar(uri.toString());
 
                 return user;
             }
@@ -76,7 +79,16 @@ public class MyConversationListFragment extends EaseConversationListFragment {
         Intent intent = new Intent(getActivity(), ConversationActivity.class);
         // EaseUI封装的聊天界面需要这两个参数，聊天者的username，以及聊天类型，单聊还是群聊
         intent.putExtra("conversationId", ((EMConversation)item).conversationId());
-        intent.putExtra("chatType", EMMessage.ChatType.Chat);
+
+        //“chatType”——聊天类型，整型，分别为单聊（1）、群聊（2）和聊天室（3）；
+        //TODO:不可以使用EMMessage.ChatType.xxx，否则会出群聊不能看到其他用户消息的问题
+        //TODO：当前((EMConversation)item).isGroup()和((EMConversation)item).getType()都不能判断一个会话是群组还是私聊，因此只能用id长度判断
+        if(((EMConversation)item).conversationId().length() >= 15){
+            intent.putExtra("chatType", 2);
+        }
+        else {
+            intent.putExtra("chatType", 1);
+        }
         //优先漫游
         intent.putExtra("isRoaming", true);
         startActivity(intent);

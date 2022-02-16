@@ -86,11 +86,12 @@ public class ConversationActivity extends BaseActivity {
         //设置右侧菜单图标
         titleBarMessage.setRightImageResource(R.drawable.chat_user_info);
         //设置标题
-        if(getIntent().getExtras().get("chatType").equals(EMMessage.ChatType.Chat)){
+        if(getIntent().getExtras().get("chatType").equals(1)){
             titleBarMessage.setTitle("和用户"+getIntent().getExtras().get("conversationId").toString()+"的聊天");
-        }else if(getIntent().getExtras().get("chatType").equals(EMMessage.ChatType.GroupChat)){
+        }else if(getIntent().getExtras().get("chatType").equals(2)){
             titleBarMessage.setTitle("");
         }
+
 
 //        //设置标题位置
 //        titleBarMessage.setTitlePosition(EaseTitleBar.TitlePosition.Left);

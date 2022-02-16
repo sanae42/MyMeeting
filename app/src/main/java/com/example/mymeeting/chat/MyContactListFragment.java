@@ -55,7 +55,7 @@ public class MyContactListFragment extends EaseContactListFragment {
                 Intent intent = new Intent(getActivity(), ConversationActivity.class);
                 // EaseUI封装的聊天界面需要这两个参数，聊天者的username，以及聊天类型，单聊还是群聊
                 intent.putExtra("conversationId", username);
-                intent.putExtra("chatType", EMMessage.ChatType.Chat);
+                intent.putExtra("chatType", 1);
                 //优先漫游
                 intent.putExtra("isRoaming", true);
                 startActivity(intent);
