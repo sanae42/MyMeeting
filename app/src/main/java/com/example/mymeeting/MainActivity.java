@@ -138,7 +138,15 @@ public class MainActivity extends BaseActivity {
             ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
             ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
             getAttendingMeetingFromBomb();
-            Toast.makeText(getContext(), "测试接收广播成功", Toast.LENGTH_SHORT).show();
+
+            if(BmobUser.isLogin()==true){
+                loggedLayout.setVisibility(View.VISIBLE);
+                unloggedLayout.setVisibility(View.GONE);
+            }else {
+                loggedLayout.setVisibility(View.GONE);
+                unloggedLayout.setVisibility(View.VISIBLE);
+            }
+//            Toast.makeText(getContext(), "测试接收广播成功", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -259,6 +267,11 @@ public class MainActivity extends BaseActivity {
 
                     }
                 }).start();
+
+                //重新加载列表
+                ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
+                ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
+                getAttendingMeetingFromBomb();
 
                 loggedLayout.setVisibility(View.GONE);
                 unloggedLayout.setVisibility(View.VISIBLE);
@@ -760,6 +773,7 @@ public class MainActivity extends BaseActivity {
         switch (requestCode){
             case 1:
                 if(resultCode==RESULT_OK){
+                    //TODO : 登录活动已采用广播形式提醒主活动刷新，不再采用间接跳转监听；其他地方也可以使用广播
                     //登录成功，刷新侧边栏头部，并且刷新两个fragment获取数据
                     Boolean if_login = data.getBooleanExtra("login", false);
                     if(if_login==true){
