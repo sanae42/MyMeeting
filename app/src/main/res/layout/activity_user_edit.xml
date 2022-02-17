@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".userEdit.UserEditActivity"
+    android:orientation="vertical">
+    <com.hyphenate.easeui.widget.EaseTitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/em_common_title_bar_height"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleBarDisplayHomeAsUpEnabled="true"
+        app:titleBarTitle=""/>
+
+    <LinearLayout
+        android:id="@+id/nick_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!--item的上分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+        <!--item内容部分的容器-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
+
+            <!--item左边的Icon-->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/nick_edit"/>
+
+            <!--item中间部分的文字-->
+            <TextView
+                android:layout_width="0dp"
+                android:text="用户昵称"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_weight="1"
+                android:textSize="20sp" />
+
+            <!--item 中间部分的输入框（有则显示五则隐藏，默认隐藏）-->
+<!--            <EditText-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="2"-->
+<!--                android:background="@color/transparent"-->
+<!--                android:lines="1"-->
+<!--                android:maxLines="1"-->
+<!--                android:textSize="14sp" />-->
+
+            <!--item右边的文字-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp" />
+
+            <!--item右边的Icon 默认是向右的箭头-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:src="@drawable/ic_baseline_keyboard_arrow_right_24" />
+        </LinearLayout>
+
+        <!--item的下分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/password_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!--item的上分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+        <!--item内容部分的容器-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70sp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
+
+            <!--item左边的Icon-->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/password_wdit"/>
+
+            <!--item中间部分的文字-->
+            <TextView
+                android:layout_width="0dp"
+                android:text="密码修改"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_weight="1"
+                android:textSize="20sp" />
+
+            <!--item 中间部分的输入框（有则显示五则隐藏，默认隐藏）-->
+<!--            <EditText-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="2"-->
+<!--                android:background="@color/transparent"-->
+<!--                android:lines="1"-->
+<!--                android:maxLines="1"-->
+<!--                android:textSize="14sp" />-->
+
+            <!--item右边的文字-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp" />
+
+            <!--item右边的Icon 默认是向右的箭头-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:src="@drawable/ic_baseline_keyboard_arrow_right_24" />
+        </LinearLayout>
+
+        <!--item的下分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+    </LinearLayout>
+
+</LinearLayout>

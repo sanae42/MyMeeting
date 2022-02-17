@@ -40,7 +40,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity android:name=".login.RegisterActivity"></activity>
+        <activity android:name=".userEdit.UserEditActivity"></activity>
+        <activity android:name=".login.RegisterActivity" />
         <activity android:name=".chat.ConversationActivity" />
         <activity android:name=".chat.ChatActivity" />
         <activity android:name=".sign.MeetingSignActivity" />

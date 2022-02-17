@@ -32,6 +32,7 @@ import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.login.LoginActivity;
 import com.example.mymeeting.note.AllNoteActivity;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
+import com.example.mymeeting.userEdit.UserEditActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -197,10 +198,26 @@ public class MainActivity extends BaseActivity {
                         startActivity(intent_calendar);
                         break;
                     case R.id.nav_note:
-                        Intent intent_note = new Intent();
-                        intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
-                        intent_note.putExtra("type","all");
-                        startActivity(intent_note);
+                        if(BmobUser.isLogin()==true){
+                            Intent intent_note = new Intent();
+                            intent_note.setClass(getApplicationContext(), AllNoteActivity.class);
+                            intent_note.putExtra("type","all");
+                            startActivity(intent_note);
+                        }else {
+                            Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.id.nav_user:
+                        if(BmobUser.isLogin()==true){
+                            Intent intent_user = new Intent();
+                            intent_user.setClass(getApplicationContext(), UserEditActivity.class);
+                            startActivity(intent_user);
+                        }else {
+                            Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.id.nav_more:
+
                         break;
                     default:
                         break;

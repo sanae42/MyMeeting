@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="em_login_et_input">
         <item name="android:layout_width">0dp</item>
@@ -47,7 +47,13 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="liearlayout_item_view">
+        <!--触摸状态时颜色-->
 
+
+        <item name="android:background" state_pressed="true">@color/light_gray</item>
+<!--        <item name="android:b" state_focused="true">@color/light_gray</item>-->
+    </style>
 
 
 
