@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mymeeting.about.AboutActivity;
 import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
@@ -229,8 +230,13 @@ public class MainActivity extends BaseActivity {
                             Toast.makeText(getContext(), "登录后才能使用该功能", Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    case R.id.nav_more:
+                    case R.id.nav_setting:
 
+                        break;
+                    case R.id.nav_more:
+                        Intent intent_more = new Intent();
+                        intent_more.setClass(getApplicationContext(), AboutActivity.class);
+                        startActivity(intent_more);
                         break;
                     default:
                         break;
@@ -542,7 +548,22 @@ public class MainActivity extends BaseActivity {
                                 m.setStateNumber(0);
                                 m.setIntroduction(meeting.getIntroduction());
                                 m.setComtent(meeting.getComtent());
-                                m.setImageId(R.drawable.flower); //
+                                //设置会议图片
+//                                m.setImageId(R.drawable.flower);
+                                switch (m.getType()){
+                                    case "兴趣社团会议":
+                                        m.setImageId(R.mipmap.meeting_background4);
+                                        break;
+                                    case "学生职能社团会议":
+                                        m.setImageId(R.mipmap.meeting_background3);
+                                        break;
+                                    case "学术研讨会议":
+                                        m.setImageId(R.mipmap.meeting_background2);
+                                        break;
+                                    default:
+                                        m.setImageId(R.mipmap.meeting_background1);
+                                        break;
+                                }
                                 m.setOrganizer(meeting.getOrganizer());
                                 m.setGroupId(meeting.getGroupId());
 

@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".userEdit.UserEditActivity"
     android:orientation="vertical">
-    <com.google.android.material.appbar.AppBarLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/appBarLayout">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            tools:ignore="MissingConstraints" >
+        android:layout_height="260dp"
+        android:background="@color/white2"
+        tools:ignore="MissingConstraints">
+        <ImageView
+            android:id="@+id/logo_image"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:src="@mipmap/logo"
+            android:layout_centerInParent="true">
+        </ImageView>
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26dp"
+            android:text="MyMeeting"
+            android:textColor="@color/black"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-condensed"
+            android:layout_below="@id/logo_image">
 
-        </androidx.appcompat.widget.Toolbar>
+        </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="v1.0"
+            android:fontFamily="sans-serif-black"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/app_name"
+            android:layout_above="@+id/app_name">
 
-    </com.google.android.material.appbar.AppBarLayout>
+        </TextView>
+    </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/nick_edit"
+        android:id="@+id/rule_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -48,29 +67,29 @@
             android:paddingTop="10dp">
 
             <!--item左边的Icon-->
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/nick_edit"/>
+<!--            <ImageView-->
+<!--                android:layout_width="20dp"-->
+<!--                android:layout_height="20dp"-->
+<!--                android:src="@mipmap/nick_edit"/>-->
 
             <!--item中间部分的文字-->
             <TextView
                 android:layout_width="0dp"
-                android:text="用户昵称"
+                android:text="用户使用条例"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_weight="1"
                 android:textSize="18sp" />
 
             <!--item 中间部分的输入框（有则显示五则隐藏，默认隐藏）-->
-<!--            <EditText-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="2"-->
-<!--                android:background="@color/transparent"-->
-<!--                android:lines="1"-->
-<!--                android:maxLines="1"-->
-<!--                android:textSize="14sp" />-->
+            <!--            <EditText-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="2"-->
+            <!--                android:background="@color/transparent"-->
+            <!--                android:lines="1"-->
+            <!--                android:maxLines="1"-->
+            <!--                android:textSize="14sp" />-->
 
             <!--item右边的文字-->
             <TextView
@@ -95,7 +114,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/password_edit"
+        android:id="@+id/donation_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -118,29 +137,29 @@
             android:paddingTop="10dp">
 
             <!--item左边的Icon-->
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/password_wdit"/>
+<!--            <ImageView-->
+<!--                android:layout_width="20dp"-->
+<!--                android:layout_height="20dp"-->
+<!--                android:src="@mipmap/password_wdit"/>-->
 
             <!--item中间部分的文字-->
             <TextView
                 android:layout_width="0dp"
-                android:text="密码修改"
+                android:text="捐赠"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_weight="1"
                 android:textSize="18sp" />
 
             <!--item 中间部分的输入框（有则显示五则隐藏，默认隐藏）-->
-<!--            <EditText-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="2"-->
-<!--                android:background="@color/transparent"-->
-<!--                android:lines="1"-->
-<!--                android:maxLines="1"-->
-<!--                android:textSize="14sp" />-->
+            <!--            <EditText-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="2"-->
+            <!--                android:background="@color/transparent"-->
+            <!--                android:lines="1"-->
+            <!--                android:maxLines="1"-->
+            <!--                android:textSize="14sp" />-->
 
             <!--item右边的文字-->
             <TextView

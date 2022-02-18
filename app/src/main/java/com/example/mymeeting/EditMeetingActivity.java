@@ -128,11 +128,52 @@ public class EditMeetingActivity extends BaseActivity {
 
             nameEditText.setText(meetingToEdit.getName());
             introductionEditText.setText(meetingToEdit.getIntroduction());
-            typeSpinner.setSelectedIndex(0);   //后续再用内联函数之类的方式实现，懒得写了，就选0了
+            //选择框在会议编辑时的暂时解决方案
+            Integer typeIndex;
+            switch (meetingToEdit.getType()){
+                case "兴趣社团会议":
+                    typeIndex=0;
+                    break;
+                case "学生职能社团会议":
+                    typeIndex=1;
+                    break;
+                case "学术研讨会议":
+                    typeIndex=2;
+                    break;
+                default:
+                    typeIndex=0;
+                    break;
+            }
+            typeSpinner.setSelectedIndex(typeIndex);
 
             organizerEditText.setText(meetingToEdit.getOrganizer());
             contentEditText.setText(meetingToEdit.getComtent());
-            locationSpinner.setSelectedIndex(0);   //后续再用内联函数之类的方式实现，懒得写了，就选0了
+            //选择框在会议编辑时的暂时解决方案
+            Integer locationIndex;
+            switch (meetingToEdit.getLocation()){
+                case "sy101":
+                    locationIndex=0;
+                    break;
+                case "sy102":
+                    locationIndex=1;
+                    break;
+                case "sy103":
+                    locationIndex=2;
+                    break;
+                case "sy104":
+                    locationIndex=3;
+                    break;
+                case "sy105":
+                    locationIndex=4;
+                    break;
+                case "sy106":
+                    locationIndex=5;
+                    break;
+                default:
+                    locationIndex=0;
+                    break;
+            }
+            locationSpinner.setSelectedIndex(locationIndex);
 
             lengthEditText.setText(meetingToEdit.getLength());
             hostTimeCalendar.scrollToCalendar(meetingToEdit.getHostDate().getYear()+1900, meetingToEdit.getHostDate().getMonth()+1,meetingToEdit.getHostDate().getDate());
@@ -362,6 +403,7 @@ public class EditMeetingActivity extends BaseActivity {
         meeting.setLocation(location);
         meeting.setOrganizer(organizer);
         meeting.setHostDate(hostDate);
+        meeting.setType(type);
         meeting.setRegistrationDate(registrationDate);
 
         meeting.setOriginator(BmobUser.getCurrentUser(_User.class));
@@ -646,6 +688,9 @@ public class EditMeetingActivity extends BaseActivity {
                             if (e == null) {
                                 Log.d(TAG, "会议和群组绑定成功");
                                 Toast.makeText(getContext(), "会议和群组绑定成功" , Toast.LENGTH_SHORT).show();
+                                //群组绑定成功后采用广播通知主活动刷新
+                                Intent intent_broadcast = new Intent("com.example.mymeeting.REFRESH_DATA");
+                                sendBroadcast(intent_broadcast, "com.example.mymeeting.REFRESH_DATA");
                             } else {
                                 Log.d(TAG, "会议和群组绑定失败"+e.getMessage());
                                 Toast.makeText(getContext(), "会议和群组绑定失败"+e.getMessage() , Toast.LENGTH_SHORT).show();

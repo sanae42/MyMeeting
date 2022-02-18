@@ -27,7 +27,6 @@ public class UserEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-
         initView();
     }
 
