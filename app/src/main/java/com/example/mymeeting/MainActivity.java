@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mymeeting.activityCollector.BaseActivity;
@@ -76,6 +77,7 @@ public class MainActivity extends BaseActivity {
     SectionsPagerAdapter sectionsPagerAdapter;
     ViewPager viewPager;
 
+    View headview;
     //  侧边栏头部布局
     RelativeLayout loggedLayout;
     RelativeLayout unloggedLayout;
@@ -140,14 +142,25 @@ public class MainActivity extends BaseActivity {
             ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
             getAttendingMeetingFromBomb();
 
-            if(BmobUser.isLogin()==true){
-                loggedLayout.setVisibility(View.VISIBLE);
-                unloggedLayout.setVisibility(View.GONE);
-            }else {
-                loggedLayout.setVisibility(View.GONE);
-                unloggedLayout.setVisibility(View.VISIBLE);
-            }
+            refreshNav();
 //            Toast.makeText(getContext(), "测试接收广播成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 根据登录状态刷新侧边栏样式
+     */
+    private void refreshNav(){
+        if(BmobUser.isLogin()==true){
+            loggedLayout.setVisibility(View.VISIBLE);
+            unloggedLayout.setVisibility(View.GONE);
+            TextView nick = (TextView)headview.findViewById(R.id.nick);
+            TextView username = (TextView)headview.findViewById(R.id.username);
+            username.setText(BmobUser.getCurrentUser(_User.class).getUsername());
+            nick.setText(BmobUser.getCurrentUser(_User.class).getNick());
+        }else {
+            loggedLayout.setVisibility(View.GONE);
+            unloggedLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -231,18 +244,10 @@ public class MainActivity extends BaseActivity {
 
         //  根据用户是否登录改变侧边栏headerLayout样式
         Bmob.initialize(getContext(),appkey);
-        View headview=navView.inflateHeaderView(R.layout.nav_header);
+        headview=navView.inflateHeaderView(R.layout.nav_header);
         loggedLayout = (RelativeLayout)headview.findViewById(R.id.loggedLayout);
         unloggedLayout = (RelativeLayout)headview.findViewById(R.id.unloggedLayout);
-        if (BmobUser.isLogin()) {
-            loggedLayout.setVisibility(View.VISIBLE);
-            unloggedLayout.setVisibility(View.GONE);
-//            User user = BmobUser.getCurrentUser(User.class);
-//            Snackbar.make(view, "已经登录：" + user.getUsername(), Snackbar.LENGTH_LONG).show();
-        } else {
-            loggedLayout.setVisibility(View.GONE);
-            unloggedLayout.setVisibility(View.VISIBLE);
-        }
+        refreshNav();
         //注销按钮
         Button logoutButton = (Button) headview.findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -290,8 +295,7 @@ public class MainActivity extends BaseActivity {
                 ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
                 getAttendingMeetingFromBomb();
 
-                loggedLayout.setVisibility(View.GONE);
-                unloggedLayout.setVisibility(View.VISIBLE);
+                refreshNav();
             }
         });
         //登录按钮
@@ -793,10 +797,7 @@ public class MainActivity extends BaseActivity {
                     //TODO : 登录活动已采用广播形式提醒主活动刷新，不再采用间接跳转监听；其他地方也可以使用广播
                     //登录成功，刷新侧边栏头部，并且刷新两个fragment获取数据
                     Boolean if_login = data.getBooleanExtra("login", false);
-                    if(if_login==true){
-                        loggedLayout.setVisibility(View.VISIBLE);
-                        unloggedLayout.setVisibility(View.GONE);
-                    }
+                    refreshNav();
                     //TODO: ****_User表中有attendingMeeting的版本
                     ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,0)).showSwipeRefresh();
                     ((MeetingFragment) sectionsPagerAdapter.instantiateItem(viewPager,1)).showSwipeRefresh();
