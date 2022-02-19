@@ -5,10 +5,15 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -130,6 +135,9 @@ public class MainActivity extends BaseActivity {
         intentFilter.addAction("com.example.mymeeting.REFRESH_DATA");
         receiver = new Receiver();
         registerReceiver(receiver, intentFilter);
+
+        Intent startIntent = new Intent(this, MyService.class);
+        startService(startIntent); // 启动服务
 
     }
 
