@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.NotificationChannel;
@@ -19,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +41,7 @@ import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.login.LoginActivity;
 import com.example.mymeeting.note.AllNoteActivity;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
+import com.example.mymeeting.setting.SettingActivity;
 import com.example.mymeeting.userEdit.UserEditActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -88,6 +91,10 @@ public class MainActivity extends BaseActivity {
     RelativeLayout loggedLayout;
     RelativeLayout unloggedLayout;
 
+    //sp数据库 存放应用设置状态
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+
     //广播
     IntentFilter intentFilter;
     Receiver receiver;
@@ -136,8 +143,12 @@ public class MainActivity extends BaseActivity {
         receiver = new Receiver();
         registerReceiver(receiver, intentFilter);
 
-        Intent startIntent = new Intent(this, MyService.class);
-        startService(startIntent); // 启动服务
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        //如果允许后台通知则开始应用后开启通知服务
+        if(pref.getBoolean("backgroundNotification", true) == true){
+            Intent startIntent = new Intent(this, MyService.class);
+            startService(startIntent);
+        }
 
     }
 
@@ -239,7 +250,9 @@ public class MainActivity extends BaseActivity {
                         }
                         break;
                     case R.id.nav_setting:
-
+                        Intent intent_setting = new Intent();
+                        intent_setting.setClass(getApplicationContext(), SettingActivity.class);
+                        startActivity(intent_setting);
                         break;
                     case R.id.nav_more:
                         Intent intent_more = new Intent();
@@ -759,12 +772,10 @@ public class MainActivity extends BaseActivity {
 //            case R.id.backup:
 //                Toast.makeText(this, "You clicked Backup", Toast.LENGTH_SHORT).show();
 //                break;
-            case R.id.delete:
-                Toast.makeText(this, "You clicked Delete", Toast.LENGTH_SHORT).show();
+            case R.id.notification:
+                Toast.makeText(this, "点击了通知", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.settings:
-                Toast.makeText(this, "You clicked Settings", Toast.LENGTH_SHORT).show();
-                break;
+
             default:
         }
         return true;
