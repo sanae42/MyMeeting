@@ -96,7 +96,7 @@ public class AllNoteActivity extends BaseActivity {
 
         //        recyclerview设置
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-//        适配器设置，设置显示2列
+        //   适配器设置，设置显示2列
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new AllNoteListAdapter(allNoteList);

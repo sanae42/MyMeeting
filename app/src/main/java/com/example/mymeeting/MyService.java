@@ -60,7 +60,7 @@ public class MyService extends Service {
         int num = 0;
         for (meetingItem m:meetings){
             if(m.getIfParticipant()==true){
-                if( (date.getYear()+1900)==(m.getHostDate().getYear()+1900) || (date.getMonth()+1)==(m.getHostDate().getMonth()+1) || (date.getDate())==(m.getHostDate().getDate()))
+                if( (date.getYear()+1900)==(m.getHostDate().getYear()+1900) && (date.getMonth()+1)==(m.getHostDate().getMonth()+1) && (date.getDate())==(m.getHostDate().getDate()))
                 {
                     num++;
                 }

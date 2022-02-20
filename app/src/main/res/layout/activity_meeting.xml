@@ -49,17 +49,105 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="35dp"
-                app:cardCornerRadius="4dp">
+                app:cardCornerRadius="8dp">
 
-                <TextView
-                    android:id="@+id/fruit_content_text"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text=" 会议信息"
+                        android:drawableLeft="@drawable/ic_baseline_library_books_24"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textSize="24dp"/>
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/bombid_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="会议id：">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/type_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="会议类型：">
+                        </TextView>、
+                        <TextView
+                            android:id="@+id/host_date_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="举办时间：">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/length_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="预期时长：">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/location_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="会议地点：">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/organizer_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="举办方：">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/registration_date_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="注册时间：">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/introduction_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_margin="1dp"
+                            android:textSize="15dp"
+                            android:text="会议简介：">
+                        </TextView>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <include layout="@layout/meeting_edit"

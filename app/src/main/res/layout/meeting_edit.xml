@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="15dp">
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/meeting_edit_cardview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="0dp"
-        app:cardCornerRadius="4dp">
+        android:layout_marginTop="5dp"
+        app:cardCornerRadius="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,9 +26,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="会议管理"
-                android:drawableLeft="@drawable/ic_baseline_library_books_24"
-                android:fontFamily="sans-serif-black"
+                android:text=" 会议管理"
+                android:drawableLeft="@drawable/ic_baseline_build_24"
+                android:fontFamily="sans-serif-condensed"
                 android:textSize="24dp"/>
 
 
@@ -35,6 +36,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -43,6 +48,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:background="@drawable/linearlayout_item_view"
                         android:id="@+id/edit_this_meeting"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -66,6 +72,7 @@
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/delete_this_meeting"
+                        android:background="@drawable/linearlayout_item_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -113,4 +120,4 @@
     </androidx.cardview.widget.CardView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

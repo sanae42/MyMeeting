@@ -28,6 +28,7 @@ import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.group.MeetingGroupActivity;
 import com.example.mymeeting.map.MapActivity;
 import com.example.mymeeting.note.AllNoteActivity;
+import com.example.mymeeting.notification.NotificationHelper;
 import com.example.mymeeting.sign.MeetingSignActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -69,24 +70,38 @@ public class MeetingActivity extends BaseActivity {
         Intent intent = getIntent();
         meeting = (meetingItem)intent.getSerializableExtra("meeting_item");
 
+        initview();
+    }
 
+    private void initview(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        ImageView fruitImageView = (ImageView) findViewById(R.id.fruit_image_view);
-        TextView fruitContentText = (TextView) findViewById(R.id.fruit_content_text);
+        ImageView imageView = (ImageView) findViewById(R.id.fruit_image_view);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        collapsingToolbar.setTitle(meeting.getName()+""+meeting.getObjectId());
-        Glide.with(this).load(meeting.getImageId()).into(fruitImageView);
+        collapsingToolbar.setTitle(meeting.getName());
+        Glide.with(this).load(meeting.getImageId()).into(imageView);
 
-        String fruitContent = generateFruitContent(meeting.getComtent());
-//        if(meeting.getIfOriginator()==true)fruitContent.concat(" 是申请者");
-        if(meeting.getIfOriginator()==true)fruitContent="sdfgfdsdfghgfd";
-        if(meeting.getIfParticipant()==true)fruitContent="++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-        fruitContentText.setText(fruitContent);
+        TextView bombid_text = (TextView) findViewById(R.id.bombid_text);
+        TextView type_text = (TextView) findViewById(R.id.type_text);
+        TextView host_date_text = (TextView) findViewById(R.id.host_date_text);
+        TextView length_text = (TextView) findViewById(R.id.length_text);
+        TextView location_text = (TextView) findViewById(R.id.location_text);
+        TextView organizer_text = (TextView) findViewById(R.id.organizer_text);
+        TextView registration_date_text = (TextView) findViewById(R.id.registration_date_text);
+        TextView introduction_text = (TextView) findViewById(R.id.introduction_text);
+
+        bombid_text.setText("会议id："+meeting.getBomb_id());
+        type_text.setText("会议类型："+meeting.getType());
+        host_date_text.setText("举办时间："+meeting.getHostDate().toString());
+        length_text.setText("预期时长："+meeting.getLength());
+        location_text.setText("会议地点："+meeting.getLocation());
+        organizer_text.setText("举办方："+meeting.getOrganizer());
+        registration_date_text.setText("注册时间："+meeting.getRegistrationDate().toString());
+        introduction_text.setText("注册时间："+meeting.getIntroduction());
 
         //悬浮按钮，根据参会状态不同设置不同样式
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
@@ -174,7 +189,11 @@ public class MeetingActivity extends BaseActivity {
         meetingDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                final AlertDialog.Builder alterDiaglog = new AlertDialog.Builder(MeetingActivity.this);
+                alterDiaglog.setIcon(R.drawable.ic_baseline_library_books_24);//图标
+                alterDiaglog.setTitle("会议详情");//文字
+                alterDiaglog.setMessage(meeting.getComtent());//提示消息
+                alterDiaglog.show();
             }
         });
 
@@ -237,7 +256,6 @@ public class MeetingActivity extends BaseActivity {
                 deleteMeeting();
             }
         });
-
     }
 
     /**
@@ -504,6 +522,9 @@ public class MeetingActivity extends BaseActivity {
                                 if (e == null) {
                                     Log.d(TAG, "删除会议成功");
                                     Toast.makeText(getContext(), "删除会议成功", Toast.LENGTH_SHORT).show();
+                                    //发送通知
+                                    NotificationHelper notificationHelper = new NotificationHelper();
+                                    notificationHelper.addNotification("删除会议"+meeting.getName()+"成功" , "");
                                     //回到主活动刷新列表
                                     Intent intent = new Intent();
                                     setResult(RESULT_OK,intent);
@@ -513,6 +534,9 @@ public class MeetingActivity extends BaseActivity {
                                     progressDialog.dismiss();
                                     Log.d(TAG, "删除会议失败"+e.getMessage());
                                     Toast.makeText(getContext(), "删除会议失败"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    //发送通知
+                                    NotificationHelper notificationHelper = new NotificationHelper();
+                                    notificationHelper.addNotification("删除会议"+meeting.getName()+"失败" , "");
                                 }
                             }
                         });

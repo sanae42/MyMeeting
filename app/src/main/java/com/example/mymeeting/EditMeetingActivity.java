@@ -37,6 +37,7 @@ import com.example.mymeeting.bomb.Meeting;
 import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.chat.ConversationActivity;
 import com.example.mymeeting.db.meetingItem;
+import com.example.mymeeting.notification.NotificationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -470,6 +471,9 @@ public class EditMeetingActivity extends BaseActivity {
                             public void run() {
                                 Log.d(TAG, "创建编辑成功");
                                 Toast.makeText(getContext(), "创建编辑成功", Toast.LENGTH_SHORT).show();
+                                //发送通知
+                                NotificationHelper notificationHelper = new NotificationHelper();
+                                notificationHelper.addNotification("编辑会议"+meeting.getName()+"成功" , "");
                                 //TODO : (已过时)这里应该提醒主活动list刷新，但因为不是主活动跳转的活动，没法用监听活动返回来实现; 但可以先返回MeetingActivity，在监听，再返回主活动，间接实现
                                 //返回主活动，刷新两个列表
 //                                Intent intent = new Intent();
@@ -495,6 +499,9 @@ public class EditMeetingActivity extends BaseActivity {
                             public void run() {
                                 Log.d(TAG, "创建编辑失败");
                                 Toast.makeText(getContext(), "创建编辑失败", Toast.LENGTH_SHORT).show();
+                                //发送通知
+                                NotificationHelper notificationHelper = new NotificationHelper();
+                                notificationHelper.addNotification("编辑会议"+meeting.getName()+"失败" , "");
                                 //取消展示进度条
                                 progressDialog.dismiss();
                             }
@@ -518,6 +525,9 @@ public class EditMeetingActivity extends BaseActivity {
                 if(e==null){
                     Log.d(TAG, "创建会议成功，返回objectId为："+objectId);
                     Toast.makeText(getContext(), "创建会议成功，返回objectId为："+objectId, Toast.LENGTH_SHORT).show();
+                    //发送通知
+                    NotificationHelper notificationHelper = new NotificationHelper();
+                    notificationHelper.addNotification("新建会议"+meeting.getName()+"成功" , "");
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -566,6 +576,9 @@ public class EditMeetingActivity extends BaseActivity {
                 }else{
                     Log.d(TAG, "创建会议失败：" + e.getMessage());
                     Toast.makeText(getContext(), "创建会议失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    //发送通知
+                    NotificationHelper notificationHelper = new NotificationHelper();
+                    notificationHelper.addNotification("新建会议"+meeting.getName()+"失败" , "");
                 }
             }
         });

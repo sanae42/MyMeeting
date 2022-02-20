@@ -40,6 +40,7 @@ import com.example.mymeeting.chat.ChatActivity;
 import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.login.LoginActivity;
 import com.example.mymeeting.note.AllNoteActivity;
+import com.example.mymeeting.notification.NotificationActivity;
 import com.example.mymeeting.pager.SectionsPagerAdapter;
 import com.example.mymeeting.setting.SettingActivity;
 import com.example.mymeeting.userEdit.UserEditActivity;
@@ -773,7 +774,13 @@ public class MainActivity extends BaseActivity {
 //                Toast.makeText(this, "You clicked Backup", Toast.LENGTH_SHORT).show();
 //                break;
             case R.id.notification:
-                Toast.makeText(this, "点击了通知", Toast.LENGTH_SHORT).show();
+                if(BmobUser.isLogin()==true){
+                    Intent intent_notification = new Intent();
+                    intent_notification.setClass(getApplicationContext(), NotificationActivity.class);
+                    startActivity(intent_notification);
+                }else {
+                    Toast.makeText(getContext(), "登录后才能使用通知", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             default:

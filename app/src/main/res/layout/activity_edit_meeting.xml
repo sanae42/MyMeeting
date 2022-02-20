@@ -60,9 +60,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:text="基本信息"
+                            android:text=" 基本信息"
                             android:drawableLeft="@drawable/ic_baseline_library_books_24"
-                            android:fontFamily="sans-serif-black"
+                            android:fontFamily="sans-serif-condensed"
                             android:textSize="24dp"/>
 
 
@@ -114,9 +114,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:text="详细信息"
+                            android:text=" 详细信息"
                             android:drawableLeft="@drawable/ic_baseline_library_books_24"
-                            android:fontFamily="sans-serif-black"
+                            android:fontFamily="sans-serif-condensed"
                             android:textSize="24dp"/>
                         <EditText
                             android:id="@+id/organizerEditText"
@@ -166,9 +166,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:text="图片上传"
+                            android:text=" 图片上传"
                             android:drawableLeft="@drawable/ic_baseline_library_books_24"
-                            android:fontFamily="sans-serif-black"
+                            android:fontFamily="sans-serif-condensed"
                             android:textSize="24dp"/>
                         <Button
                             android:id="@+id/choose_from_album"
@@ -212,9 +212,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
-                            android:text="会议时间"
+                            android:text=" 会议时间"
                             android:drawableLeft="@drawable/ic_baseline_calendar_today_24"
-                            android:fontFamily="sans-serif-black"
+                            android:fontFamily="sans-serif-condensed"
                             android:textSize="24dp"/>
                         <EditText
                             android:id="@+id/lengthEditText"
