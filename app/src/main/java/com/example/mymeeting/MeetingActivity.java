@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mymeeting.academicSchedule.AcademicScheduleActivity;
 import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.allParticipants.AllParticipantsActivity;
 import com.example.mymeeting.bomb.Meeting;
@@ -101,7 +102,7 @@ public class MeetingActivity extends BaseActivity {
         location_text.setText("会议地点："+meeting.getLocation());
         organizer_text.setText("举办方："+meeting.getOrganizer());
         registration_date_text.setText("注册时间："+meeting.getRegistrationDate().toString());
-        introduction_text.setText("注册时间："+meeting.getIntroduction());
+        introduction_text.setText("会议简介："+meeting.getIntroduction());
 
         //悬浮按钮，根据参会状态不同设置不同样式
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
@@ -231,6 +232,25 @@ public class MeetingActivity extends BaseActivity {
                 //展示进度条
                 showProgress();
                 easeLoginThenGotoGroup();
+            }
+        });
+
+        //会议功能之———学术会议日程会议
+        LinearLayout meetingSchedule = (LinearLayout)findViewById(R.id.meeting_schedule);
+        if(meeting.getType().equals("学术研讨会议")==true){
+            meetingSchedule.setVisibility(View.VISIBLE);
+        }else {
+            meetingSchedule.setVisibility(View.INVISIBLE);
+        }
+        meetingSchedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(meeting.getType().equals("学术研讨会议")==true){
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), AcademicScheduleActivity.class);
+                    intent.putExtra("meeting",meeting);
+                    startActivity(intent);
+                }
             }
         });
 
