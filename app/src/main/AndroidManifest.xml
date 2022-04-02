@@ -40,7 +40,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMeeting">
-        <activity android:name=".academicSchedule.AcademicScheduleActivity"></activity>
+        <activity android:name=".academicSchedule.AcademicScheduleDetailActivity"></activity>
+        <activity android:name=".academicSchedule.AcademicScheduleActivity" />
         <activity android:name=".notification.NotificationActivity" />
         <activity android:name=".setting.SettingActivity" />
 

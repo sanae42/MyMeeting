@@ -1,9 +1,11 @@
 package com.example.mymeeting.bomb;
 
+import java.io.Serializable;
+
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobDate;
 
-public class Schedule extends BmobObject {
+public class Schedule extends BmobObject implements Serializable {
     private Number id;  //主键 自增
 
     private String type; //类型
@@ -16,7 +18,13 @@ public class Schedule extends BmobObject {
     private String start;
     private String end;
 
+    private String day;
+    private String month;
+    private String year;
+
     private _User sender; //发送者，一对一关系
+
+    private _User speaker; //主讲人，一对一关系
 
     private Meeting meeting;//所属会议，一对一关系
 
@@ -54,16 +62,29 @@ public class Schedule extends BmobObject {
         this.meeting = meeting;
     }
 
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public void setSpeaker(_User speaker) {
+        this.speaker = speaker;
+    }
 
     public void setEnd(String end) {
         this.end = end;
     }
 
-
     public void setStart(String start) {
         this.start = start;
     }
-
 
     public String getContent() {
         return content;
@@ -97,11 +118,25 @@ public class Schedule extends BmobObject {
         return id;
     }
 
-
     public String getEnd() {
         return end;
     }
 
+    public String getYear() {
+        return year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public _User getSpeaker() {
+        return speaker;
+    }
 
     public String getStart() {
         return start;

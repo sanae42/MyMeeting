@@ -1,6 +1,8 @@
 package com.example.mymeeting.academicSchedule;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +11,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
@@ -24,6 +27,8 @@ import com.example.mymeeting.bomb._User;
 import com.example.mymeeting.db.meetingItem;
 import com.example.mymeeting.group.Msg;
 import com.example.mymeeting.group.MsgAdapter;
+import com.example.mymeeting.note.AllNoteListAdapter;
+import com.example.mymeeting.note.EditNoteActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,10 +52,12 @@ import static org.litepal.LitePalApplication.getContext;
 
 public class AcademicScheduleActivity extends BaseActivity {
 
-    private static final String TAG = "AcademicScheduleAct..ty";
+    private static final String TAG = "AcademicScheduleAct";
 
     //传参传递的会议class
     meetingItem meeting;
+
+    Toolbar toolbar;
 
     private List<Schedule> scheduleList = new ArrayList<Schedule>();
 
@@ -75,6 +82,17 @@ public class AcademicScheduleActivity extends BaseActivity {
 
     CardView new_schedule_cardview;
 
+    //比较两条日程日期的比较器
+    Comparator<Schedule> comparator = new Comparator<Schedule>() {
+        @Override
+        public int compare(Schedule o1, Schedule o2) {
+            int i1 = (Integer.parseInt(o1.getYear())-1900)*367*32 + (Integer.parseInt(o1.getMonth()))*32 + Integer.parseInt(o1.getDay());
+            int i2 = (Integer.parseInt(o2.getYear())-1900)*367*32 + (Integer.parseInt(o2.getMonth()))*32 + Integer.parseInt(o2.getDay());
+            if(i1 > i2)return 1;
+            else return -1;
+        }
+    } ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,11 +113,39 @@ public class AcademicScheduleActivity extends BaseActivity {
     private void initiateView() {
 //        inputText = (EditText) findViewById(R.id.input_text);
 //        send = (Button) findViewById(R.id.send);
+        //        导航条
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //   设置actionbar（即toolbar）最左侧按钮显示状态和图标
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ScheduleListAdapter(scheduleList);
         recyclerView.setAdapter(adapter);
+        //添加recyclerView项目监听器
+        adapter.setOnClickListener(new ScheduleListAdapter.OnClickListener() {
+            @Override
+            public void onClick(View itemView, int position) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), AcademicScheduleDetailActivity.class);
+                intent.putExtra("schedule",scheduleList.get(position));
+                //监听返回
+                startActivityForResult(intent,1);
+            }
+
+            @Override
+            public void onLongClick(View itemView, int position) {
+
+            }
+        });
 
         start_edittext = (EditText) findViewById(R.id.start_edittext);
         end_edittext = (EditText) findViewById(R.id.end_edittext);
@@ -204,14 +250,14 @@ public class AcademicScheduleActivity extends BaseActivity {
                         if(e==null){
                             Log.d(TAG, "获取学术会议日程数据成功，list长度："+list.size());
 
-                            //没有消息就退出此方法
+                            //没有内容就退出此方法
                             if(list.size()==0) {
                                 //取消展示进度条
                                 progressDialog.dismiss();
                                 return;
                             }
 
-                            //清空聊天信息列表
+                            //清空列表
                             scheduleList.clear();
                             for(Schedule s:list){
 
@@ -221,8 +267,8 @@ public class AcademicScheduleActivity extends BaseActivity {
                             }
 
                             //刷新recyclerView布局
+                            Collections.sort(scheduleList,comparator);
                             adapter.notifyDataSetChanged();
-
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -259,6 +305,19 @@ public class AcademicScheduleActivity extends BaseActivity {
         progressDialog.setCancelable(true);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
+    }
+
+    /**
+     * 按键监听，此处即toolbar上按键
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
 }

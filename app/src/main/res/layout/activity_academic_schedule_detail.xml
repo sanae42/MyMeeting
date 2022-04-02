@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".userEdit.UserEditActivity"
+    android:orientation="vertical">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:fitsSystemWindows="true">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:id="@+id/fruit_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35sp"
+        android:gravity="center_vertical"
+        android:background="@color/white2"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="日程时间"
+            android:textColor="@color/darkgray"
+            android:textSize="16sp"
+            android:layout_marginLeft="10sp">
+
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!--item的上分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+        <!--item内容部分的容器-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/linearlayout_item_view"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
+
+            <!--item左边的Icon-->
+            <!--            <ImageView-->
+            <!--                android:layout_width="20dp"-->
+            <!--                android:layout_height="20dp"-->
+            <!--                android:src="@mipmap/nick_edit"/>-->
+
+            <!--item中间部分的文字-->
+            <TextView
+                android:id="@+id/date_textview"
+                android:layout_width="match_parent"
+                android:text="2022.4.2"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_weight="1"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/length_textview"
+                android:layout_width="match_parent"
+                android:text="10:00 — 12:00"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:textSize="28sp" />
+
+
+        </LinearLayout>
+
+        <!--item的下分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35sp"
+        android:gravity="center_vertical"
+        android:background="@color/white2"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="日程主持人"
+            android:textColor="@color/darkgray"
+            android:textSize="16sp"
+            android:layout_marginLeft="10sp">
+
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!--item的上分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+        <!--item内容部分的容器-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/linearlayout_item_view"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
+
+            <!--item左边的Icon-->
+            <!--            <ImageView-->
+            <!--                android:layout_width="20dp"-->
+            <!--                android:layout_height="20dp"-->
+            <!--                android:src="@mipmap/nick_edit"/>-->
+
+            <!--item中间部分的文字-->
+            <TextView
+                android:id="@+id/speaker_textview"
+                android:layout_width="match_parent"
+                android:drawableLeft="@drawable/ic_baseline_person_24"
+                android:text="Kevin"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_weight="1"
+                android:textSize="18sp" />
+
+
+
+        </LinearLayout>
+
+        <!--item的下分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35sp"
+        android:gravity="center_vertical"
+        android:background="@color/white2"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="日程详情"
+            android:textColor="@color/darkgray"
+            android:textSize="16sp"
+            android:layout_marginLeft="10sp">
+
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!--item的上分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+        <!--item内容部分的容器-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/linearlayout_item_view"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
+
+            <!--item左边的Icon-->
+            <!--            <ImageView-->
+            <!--                android:layout_width="20dp"-->
+            <!--                android:layout_height="20dp"-->
+            <!--                android:src="@mipmap/nick_edit"/>-->
+
+            <!--item中间部分的文字-->
+            <TextView
+                android:id="@+id/detail_textview"
+                android:layout_width="match_parent"
+                android:text="日程内容日程内容日程内容日程内容日程内容日程内容"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:textSize="18sp" />
+
+
+
+        </LinearLayout>
+
+        <!--item的下分割线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#efefef" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
