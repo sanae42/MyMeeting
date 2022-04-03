@@ -18,6 +18,8 @@ public class _User extends BmobUser {
 //    private Boolean emailVerified;
     private Boolean sex;
     private String nick;
+    private String introduction;
+    private String school;
 
     private BmobRelation attendingMeeting;//参加会议，一对多关系
 //
@@ -27,12 +29,28 @@ public class _User extends BmobUser {
         this.nick = nick;
     }
 
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
     public void setAttendingMeeting(BmobRelation attendingMeeting) {
         this.attendingMeeting = attendingMeeting;
     }
 
     public String getNick() {
         return nick;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public String getSchool() {
+        return school;
     }
 
     public BmobRelation getAttendingMeeting() {

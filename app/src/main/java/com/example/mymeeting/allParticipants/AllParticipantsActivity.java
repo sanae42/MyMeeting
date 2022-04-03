@@ -1,5 +1,6 @@
 package com.example.mymeeting.allParticipants;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,6 +19,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.example.mymeeting.MainActivity;
+import com.example.mymeeting.MeetingActivity;
 import com.example.mymeeting.R;
 import com.example.mymeeting.activityCollector.BaseActivity;
 import com.example.mymeeting.bomb.Meeting;
@@ -136,7 +138,6 @@ public class AllParticipantsActivity extends BaseActivity {
         });
     }
 
-
     private void initPopupWindow(View view, int position) {
         if(popupWindow == null){
             View popupView = LayoutInflater.from(AllParticipantsActivity.this).inflate(R.layout.item_popup,null);
@@ -162,6 +163,26 @@ public class AllParticipantsActivity extends BaseActivity {
                         // 如果未登录进行登录
                         easeLoginThenGoToConversation(allParticipantsList.get(position).getUsername());
                     }
+                }
+            });
+            Button button2 = popupView.findViewById(R.id.btn_2);
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //取消展示popupWindow
+                    popupWindow.dismiss();
+                    final AlertDialog.Builder alterDiaglog = new AlertDialog.Builder(AllParticipantsActivity.this);
+                    alterDiaglog.setIcon(R.drawable.ic_baseline_person_24);//图标
+                    alterDiaglog.setTitle("个人信息");//文字
+                    String information = "";
+                    information = "昵称 ： "+allParticipantsList.get(position).getNick()+"\n";
+                    information += "用户名 ： "+allParticipantsList.get(position).getUsername()+"\n";
+                    information += "学校 ： "+allParticipantsList.get(position).getSchool()+"\n";
+                    information += "注册时间 ： "+allParticipantsList.get(position).getCreatedAt()+"\n";
+                    information += "个人简介 ： "+allParticipantsList.get(position).getIntroduction()+"\n";
+                    alterDiaglog.setMessage(information);//提示消息
+                    alterDiaglog.show();
+
                 }
             });
             // 构造函数关联
