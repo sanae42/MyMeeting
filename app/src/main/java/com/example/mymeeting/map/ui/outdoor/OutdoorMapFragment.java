@@ -259,6 +259,7 @@ public class OutdoorMapFragment extends Fragment {
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 currentPosition.append("网络");
             }
+            //加载位置信息显示文字
             positionText.setText(currentPosition);
 
             //如果是第一次定位，加载地图到我的位置
@@ -273,11 +274,12 @@ public class OutdoorMapFragment extends Fragment {
     //间隔更新位置信息
     private void initLocation(){
         LocationClientOption option = new LocationClientOption();
+        //每5s更新当前位置
         option.setScanSpan(5000);
         // 获取详细位置信息
         option.setIsNeedAddress(true);
         //设置坐标系为GCJ02坐标系
-        option.setCoorType("bd09ll"); //重要
+        option.setCoorType("bd09ll");
         mLocationClient.setLocOption(option);
     }
 

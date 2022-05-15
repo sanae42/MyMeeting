@@ -99,7 +99,8 @@ public class AcademicScheduleDetailActivity extends AppCompatActivity {
         date_textview.setText(schedule.getDate());
         length_textview.setText(schedule.getStart()+" - "+schedule.getEnd());
         if(schedule.getSpeaker()!=null){
-            speaker_textview.setText(schedule.getSpeaker().getNick());
+            //获取主讲人信息失败
+            speaker_textview.setText("");
             speaker_textview.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             speaker_textview.setOnClickListener(new View.OnClickListener() {
                 @Override

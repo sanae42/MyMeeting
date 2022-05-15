@@ -346,7 +346,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(BmobUser.isLogin()==true){
-                    Snackbar.make(v, "要新建会议吗（测试会议）", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(v, "要新建会议吗", Snackbar.LENGTH_SHORT)
                             .setAction("是的", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

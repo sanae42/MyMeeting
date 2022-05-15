@@ -128,9 +128,10 @@ public class ChatActivity extends BaseActivity {
                 case R.id.navigation_friend:
                     mViewPager.setCurrentItem(1);
                     return true;
-                case R.id.navigation_other:
-                    mViewPager.setCurrentItem(2);
-                    return true;
+                    //底部导航栏2页
+//                case R.id.navigation_other:
+//                    mViewPager.setCurrentItem(2);
+//                    return true;
             }
             return false;
         }
@@ -177,13 +178,15 @@ public class ChatActivity extends BaseActivity {
         });
 
         //底部导航栏有几项就有几个Fragment
-        final ArrayList<Fragment> fgLists=new ArrayList<>(3);
+        //底部导航栏2页
+        final ArrayList<Fragment> fgLists=new ArrayList<>(2);
         MyConversationListFragment myConversationListFragment = new MyConversationListFragment();
         MyContactListFragment myContactListFragment = new MyContactListFragment();
 
         fgLists.add(myConversationListFragment);
         fgLists.add(myContactListFragment);
-        fgLists.add(new IndoorMapFragment());
+        //底部导航栏2页
+//        fgLists.add(new IndoorMapFragment());
 //        fgLists.add(new MyFragment());
 
 
@@ -244,6 +247,8 @@ public class ChatActivity extends BaseActivity {
             }
         }
     }
+
+
 
 
 

@@ -83,7 +83,6 @@
         </RelativeLayout>
 
 
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
@@ -91,6 +90,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/ic_baseline_add_24" />
+
         <!--        </RelativeLayout>-->
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -40,6 +40,7 @@ public class MyService extends Service {
 
         new Thread(new Runnable() {
             @Override
+            //读取会议数据发送状态栏通知
             public void run() {
                 work();
             }
